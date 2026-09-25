@@ -2,7 +2,9 @@ FROM php:7.3-apache
 
 # php.iniをコピー
 COPY ./docker/php.ini /usr/local/etc/php/
-
+# Debian 11(bullseye)のEOLでsecurityリポジトリが削除され、apt-get updateが失敗するための回避策
+RUN sed -i '/security\.debian\.org/d' /etc/apt/sources.list && \
+    echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/99no-check-valid-until
 # 必要なパッケージと拡張機能をインストール
 RUN apt-get update && \
     apt-get install -y \
