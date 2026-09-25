@@ -1,0 +1,4 @@
+# FuelPHPのログ・キャッシュ
+/fuel/app/logs/*/
+/fuel/app/cache/*/
+/fuel/app/tmp/*/
