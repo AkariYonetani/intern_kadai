@@ -38,9 +38,22 @@ class Controller_Auth extends Controller_Template
                 $val->set_message('min_length', ':labelは:param:1文字以上で入力してください');
                 $val->set_message('valid_email', ':labelの形式が正しくありません');
 
+
                 if ($val->run()) {
-                    // ここに3・4（保存とログイン）を書く。今は確認用の仮の表示
-                    $errors['form'] = '入力チェックOK（保存はまだ）';
+                    $name     = $val->validated('name');
+                    $email    = $val->validated('email');
+                    $password = $val->validated('password');
+
+                    if (Model\User::email_exists($email)) {
+                        $errors['email'] = 'このメールアドレスはすでに登録されています';
+                    } else {
+                        $user_id = Model\User::create($name, $email, $password);
+
+                        Session::rotate();
+                        Session::set('user_id', $user_id);
+
+                        Response::redirect('main/index');
+                    }
                 } else {
                     foreach ($val->error() as $field => $error) {
                         $errors[$field] = $error->get_message();
