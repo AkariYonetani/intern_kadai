@@ -2,3 +2,4 @@
 /fuel/app/logs/*/
 /fuel/app/cache/*/
 /fuel/app/tmp/*/
+/fuel/app/config/development/migrations.php
