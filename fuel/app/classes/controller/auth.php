@@ -7,6 +7,7 @@ use Fuel\Core\Controller_Template;
  */
 class Controller_Auth extends Controller_Template
 {
+    protected $require_login = false;
     public function action_login()
     {
         $this->template->title = 'ログイン';
