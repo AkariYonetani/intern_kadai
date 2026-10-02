@@ -6,7 +6,17 @@
 class Controller_Auth extends Controller_Base
 {
     protected $require_login = false;
+    public function before()
+    {
+        parent::before();
 
+        // ログイン済みならメイン画面へ（ログアウトは除く）
+        if (Session::get('user_id') && $this->request->action !== 'logout') {
+            Response::redirect('main/index');
+        }
+    }
+
+    // ログイン
     public function action_login()
     {
         $input  = array('email' => '');
@@ -55,6 +65,7 @@ class Controller_Auth extends Controller_Base
         ));
     }
 
+    // ユーザー登録
     public function action_register()
     {
         $input  = array('name' => '', 'email' => '');
@@ -109,6 +120,8 @@ class Controller_Auth extends Controller_Base
             'errors' => $errors,
         ));
     }
+
+    // ログアウト
     public function post_logout()
     {
         if (! Security::check_token()) {
