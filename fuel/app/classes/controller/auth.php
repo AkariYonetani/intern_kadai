@@ -90,7 +90,6 @@ class Controller_Auth extends Controller_Base
                 $val->set_message('min_length', ':labelは:param:1文字以上で入力してください');
                 $val->set_message('valid_email', ':labelの形式が正しくありません');
 
-
                 if ($val->run()) {
                     $name     = $val->validated('name');
                     $email    = $val->validated('email');
