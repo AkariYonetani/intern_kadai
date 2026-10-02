@@ -1,7 +1,7 @@
 <h1>ユーザー登録</h1>
 
 <?php if (isset($errors['form'])): ?>
-    <p class="error"><?php echo $errors['form']; ?></p>
+    <p class="form-alert"><?php echo $errors['form']; ?></p>
 <?php endif; ?>
 
 <form action="<?php echo Uri::create('auth/register'); ?>" method="post" novalidate>
