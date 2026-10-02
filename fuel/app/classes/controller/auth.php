@@ -109,4 +109,13 @@ class Controller_Auth extends Controller_Base
             'errors' => $errors,
         ));
     }
+    public function post_logout()
+    {
+        if (! Security::check_token()) {
+            Response::redirect('main/index');
+        }
+
+        Session::delete('user_id');
+        Response::redirect('auth/login');
+    }
 }

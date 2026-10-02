@@ -17,5 +17,8 @@ abstract class Controller_Base extends Controller_Template
         if ($this->require_login && ! Session::get('user_id')) {
             Response::redirect('auth/login');
         }
+        if (Session::get('user_id')) {
+            $this->template->header = View::forge('parts/header');
+        }
     }
 }

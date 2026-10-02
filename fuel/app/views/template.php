@@ -12,6 +12,9 @@
 </head>
 
 <body>
+    <?php if (isset($header)): ?>
+        <?php echo $header; ?>
+    <?php endif; ?>
     <?php echo $content; ?>
 </body>
 
