@@ -1,17 +1,58 @@
 <?php
 
-use Fuel\Core\Controller_Template;
-
 /**
  * ログイン・ユーザー登録・ログアウトを扱うコントローラー
  */
-class Controller_Auth extends Controller_Template
+class Controller_Auth extends Controller_Base
 {
     protected $require_login = false;
+
     public function action_login()
     {
+        $input  = array('email' => '');
+        $errors = array();
+
+        if (Input::method() === 'POST') {
+            $input = array(
+                'email' => Input::post('email', ''),
+            );
+
+            if (! Security::check_token()) {
+                $errors['form'] = '画面の有効期限が切れました。もう一度送信してください。';
+            } else {
+                $val = Validation::forge();
+                $val->add_field('email', 'メールアドレス', 'required|trim|valid_email');
+                $val->add_field('password', 'パスワード', 'required');
+
+                $val->set_message('required', ':labelを入力してください');
+                $val->set_message('valid_email', ':labelの形式が正しくありません');
+
+
+                if ($val->run()) {
+                    $email    = $val->validated('email');
+                    $password = $val->validated('password');
+
+                    $user = Model\User::find_by_email($email);
+                    if ($user === null || !password_verify($password, $user['password'])) {
+                        $errors['form'] = 'メールアドレスまたはパスワードが違います';
+                    } else {
+                        Session::rotate();
+                        Session::set('user_id', $user['id']);
+
+                        Response::redirect('main/index');
+                    }
+                } else {
+                    foreach ($val->error() as $field => $error) {
+                        $errors[$field] = $error->get_message();
+                    }
+                }
+            }
+        }
         $this->template->title = 'ログイン';
-        $this->template->content = View::forge('auth/login');
+        $this->template->content = View::forge('auth/login', array(
+            'input'  => $input,
+            'errors' => $errors,
+        ));
     }
 
     public function action_register()

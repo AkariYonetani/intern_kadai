@@ -24,6 +24,23 @@ class User
     }
 
     /**
+     * メールアドレスでユーザーを探す
+     *
+     * @return array|null
+     *見つかったらidとpasswordの配列、見つからなければnull
+     */
+    public static function find_by_email($email)
+    {
+        $result = \DB::select('id', 'password')
+            ->from('users')
+            ->where('email', '=', $email)
+            ->execute()
+            ->current();
+
+        return $result;
+    }
+
+    /**
      * ユーザーと「未分類」カテゴリを作成し、新しいユーザーのIDを返す
      *
      * @return int
