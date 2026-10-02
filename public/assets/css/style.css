@@ -1,0 +1,23 @@
+:root {
+    /* フォント */
+    --font-family:"Zen Kaku Gothic New", sans-serif;/* フォント */
+    /* フォントサイズ */
+    --font-size-xs:16px;
+    --font-size-s:20px;
+    --font-size-m:24px;
+    /* 色 */
+    --color-bg: #ddd; /* 背景 */
+    --color-surface: #ffffff; /* カード・ヘッダー・サイドバー */
+    --color-rules: #999999;/* 罫線 */
+    --color-text: #1e1e1e;/* 本文・見出し */
+    --color-test-sub:666666;/* 副題 */
+    --color-text-inverse:#FFFFFF;/* 黒いボタンの上の文字 */
+    --color-error: #A82A2A;/* エラー文・エラーの枠 */
+    /* 角丸 */
+    --radius-s:5px;
+    --radius-m:8px;
+}
+body {
+    font-family: var(--font-family);
+    background-color: var(--color-bg);
+}
