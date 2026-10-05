@@ -10,7 +10,7 @@
     --color-surface: #ffffff; /* カード・ヘッダー・サイドバー */
     --color-rules: #999999; /* 罫線 */
     --color-text: #1e1e1e; /* 本文・見出し */
-    --color-test-sub: 666666; /* 副題 */
+    --color-text-sub: #666666; /* 副題 */
     --color-text-inverse: #ffffff; /* 黒いボタンの上の文字 */
     --color-error: #a82a2a; /* エラー文・エラーの枠 */
     /* 角丸 */
@@ -24,4 +24,7 @@ body {
 .layout {
     display: grid;
     grid-template-columns: 280px minmax(0, 1fr);
+}
+.sidebar{
+    background-color:var(--color-surface);
 }
