@@ -1,4 +1,4 @@
-<aside class="sidebar">
+<aside class="sidebar" data-categories="<?php echo $categories_json; ?>">
     <nav>
         <h2>カテゴリ</h2>
         <ul class="category-list">

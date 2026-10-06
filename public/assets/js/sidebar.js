@@ -1,0 +1,1 @@
+const categories = JSON.parse(document.querySelector("aside.sidebar").dataset.categories);
