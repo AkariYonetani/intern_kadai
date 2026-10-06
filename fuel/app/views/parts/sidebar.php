@@ -13,5 +13,8 @@
             </li>
         </ul>
     </nav>
-    <!-- 「カテゴリを追加」はF-05で作る -->
+    <form data-bind="submit: addCategory">
+        <input type="text" aria-label="カテゴリ名" maxlength="50" data-bind="textInput: newCategoryName" />
+        <button type="submit">追加</button>
+    </form>
 </aside>
