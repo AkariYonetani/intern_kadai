@@ -1,9 +1,9 @@
-<aside class="sidebar" data-categories="<?php echo $categories_json; ?>">
+<aside class="sidebar" data-categories="<?php echo $categories_json; ?>" data-base-url="<?php echo Uri::create('main/index/'); ?>">
     <nav>
         <h2>カテゴリ</h2>
         <ul class="category-list" data-bind="foreach: categories">
             <li class="category-item">
-                <a>
+                <a data-bind="attr: { href:$root.baseUrl + id }">
                     <span class="category-name" data-bind="text:name"></span>
                     <span class="category-count" data-bind="text:item_count"></span>
                 </a>

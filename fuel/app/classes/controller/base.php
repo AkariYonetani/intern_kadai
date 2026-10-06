@@ -23,7 +23,6 @@ abstract class Controller_Base extends Controller_Template
             $categories_json = json_encode($categories);
             $this->template->header = View::forge('parts/header');
             $this->template->sidebar = View::forge('parts/sidebar', array(
-                'categories'      => $categories,
                 'categories_json' => $categories_json,
             ));
         }
