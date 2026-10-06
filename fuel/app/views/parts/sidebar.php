@@ -15,7 +15,7 @@
     </nav>
     <form data-bind="submit: addCategory">
         <?php echo Form::csrf(); ?>
-        <input type="text" aria-label="カテゴリ名" maxlength="50" data-bind="textInput: newCategoryName" />
+        <input type="text" name="name" aria-label="カテゴリ名" maxlength="50" data-bind="textInput: newCategoryName" />
         <button type="submit">追加</button>
     </form>
 </aside>
