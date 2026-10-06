@@ -12,10 +12,13 @@
 </head>
 
 <body>
-    <?php if (isset($header)): ?>
-        <?php echo $header; ?>
-    <?php endif; ?>
-    <?php echo $content; ?>
+    <?php echo $header; ?>
+    <div class="layout">
+        <?php echo $sidebar; ?>
+        <main class="main">
+            <?php echo $content; ?>
+        </main>
+    </div>
 </body>
 
 </html>

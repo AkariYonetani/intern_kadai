@@ -1,23 +1,35 @@
 :root {
     /* フォント */
-    --font-family:"Zen Kaku Gothic New", sans-serif;/* フォント */
+    --font-family: "Zen Kaku Gothic New", sans-serif; /* フォント */
     /* フォントサイズ */
-    --font-size-xs:16px;
-    --font-size-s:20px;
-    --font-size-m:24px;
+    --font-size-xs: 16px;
+    --font-size-s: 20px;
+    --font-size-m: 24px;
     /* 色 */
     --color-bg: #ddd; /* 背景 */
     --color-surface: #ffffff; /* カード・ヘッダー・サイドバー */
-    --color-rules: #999999;/* 罫線 */
-    --color-text: #1e1e1e;/* 本文・見出し */
-    --color-test-sub:666666;/* 副題 */
-    --color-text-inverse:#FFFFFF;/* 黒いボタンの上の文字 */
-    --color-error: #A82A2A;/* エラー文・エラーの枠 */
+    --color-rules: #999999; /* 罫線 */
+    --color-text: #1e1e1e; /* 本文・見出し */
+    --color-text-sub: #666666; /* 副題 */
+    --color-text-inverse: #ffffff; /* 黒いボタンの上の文字 */
+    --color-error: #a82a2a; /* エラー文・エラーの枠 */
     /* 角丸 */
-    --radius-s:5px;
-    --radius-m:8px;
+    --radius-s: 5px;
+    --radius-m: 8px;
 }
 body {
     font-family: var(--font-family);
     background-color: var(--color-bg);
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+.layout {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 280px minmax(0, 1fr);
+}
+.sidebar {
+    background-color: var(--color-surface);
 }

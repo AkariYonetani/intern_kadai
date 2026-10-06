@@ -6,6 +6,7 @@
 class Controller_Auth extends Controller_Base
 {
     protected $require_login = false;
+    public $template = 'template_guest';
     public function before()
     {
         parent::before();
