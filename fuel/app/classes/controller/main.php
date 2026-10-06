@@ -29,6 +29,9 @@ class Controller_Main extends Controller_Base
 
         $items = \Model\Item::find_by_category_id($category['id']);
         $this->template->title = 'ホーム';
-        $this->template->content = View::forge('main/index');
+        $this->template->content = View::forge('main/index', array(
+            'category' => $category,
+            'items'    => $items,
+        ));
     }
 }
