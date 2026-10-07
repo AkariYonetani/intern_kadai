@@ -85,4 +85,21 @@ class Category
 
         return $id;
     }
+     /**
+     * 同名チェック
+     *
+     * @param int $user_id
+     * @param string $name 空白除去・バリデーション済みの名前
+     * @return bool
+     */
+    public static function exists_by_user_id_and_name($user_id,$name)
+    {
+        $result = \DB::select(\DB::expr('COUNT(*) AS cnt'))
+            ->from('categories')
+            ->where('user_id', '=',$user_id)
+            ->where('name', '=',$name)
+            ->execute()
+            ->current();
+        return $result['cnt'] > 0;
+    }
 }

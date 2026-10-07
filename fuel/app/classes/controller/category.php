@@ -23,13 +23,16 @@ class Controller_Category extends Controller_Api
             return $this->response(array('error' => $val->error('name')->get_message()), 422);
         }
 
+        if (Model\Category::exists_by_user_id_and_name($user_id, $name)) {
+            return $this->response(array('error' => '同じ名前のカテゴリがあります'), 422);
+        }
         $id = Model\Category::create($user_id, $name);
 
         return $this->response(array(
-            'id'        => $id,
-            'name'      => $name,
-            'is_default'=>'0',
-            'item_count'     => 0,
+            'id'         => $id,
+            'name'       => $name,
+            'is_default' => '0',
+            'item_count' => 0,
         ), 201);
     }
 }
