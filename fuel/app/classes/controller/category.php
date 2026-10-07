@@ -23,6 +23,13 @@ class Controller_Category extends Controller_Api
             return $this->response(array('error' => $val->error('name')->get_message()), 422);
         }
 
-        return $this->response(array('name' => $name));
+        $id = Model\Category::create($user_id, $name);
+
+        return $this->response(array(
+            'id'        => $id,
+            'name'      => $name,
+            'is_default'=>'0',
+            'item_count'     => 0,
+        ), 201);
     }
 }
