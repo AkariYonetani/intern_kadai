@@ -1,4 +1,4 @@
-<aside class="sidebar" data-categories="<?php echo $categories_json; ?>" data-base-url="<?php echo Uri::create('main/index/'); ?>">
+<aside class="sidebar" data-categories="<?php echo $categories_json; ?>" data-base-url="<?php echo Uri::create('main/index/'); ?>" data-create-url="<?php echo Uri::create('category/create'); ?>">
     <nav>
         <h2>カテゴリ</h2>
         <ul class="category-list" data-bind="foreach: categories">
@@ -16,6 +16,7 @@
     <form data-bind="submit: addCategory">
         <?php echo Form::csrf(); ?>
         <input type="text" name="name" aria-label="カテゴリ名" maxlength="50" data-bind="textInput: newCategoryName" />
-        <button type="submit">追加</button>
+        <p class="form-alert" role="alert" data-bind="visible: categoryError, text: categoryError"></p>
+        <button type="submit" data-bind="disable: isSubmitting">追加</button>
     </form>
 </aside>

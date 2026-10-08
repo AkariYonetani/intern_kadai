@@ -20,11 +20,17 @@ class Controller_Category extends Controller_Api
         $val->set_message('required', ':labelを入力してください');
         $val->set_message('max_length', ':labelは:param:1文字以内で入力してください');
         if (!$val->run(array('name' => $name))) {
-            return $this->response(array('error' => $val->error('name')->get_message()), 422);
+            return $this->response(array(
+                'error' => $val->error('name')->get_message(),
+                'token' => Security::fetch_token(),
+            ), 422);
         }
 
         if (Model\Category::exists_by_user_id_and_name($user_id, $name)) {
-            return $this->response(array('error' => '同じ名前のカテゴリがあります'), 422);
+            return $this->response(array(
+                'error' => '同じ名前のカテゴリがあります',
+                'token' => Security::fetch_token(),
+            ), 422);
         }
         $id = Model\Category::create($user_id, $name);
 
@@ -33,6 +39,7 @@ class Controller_Category extends Controller_Api
             'name'       => $name,
             'is_default' => '0',
             'item_count' => 0,
+            'token'      => Security::fetch_token(),
         ), 201);
     }
 }
