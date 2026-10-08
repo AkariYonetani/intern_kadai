@@ -62,4 +62,44 @@ class Category
             ->current();
         return $result;
     }
+     /**
+     * 新しいカテゴリを作成する
+     *
+     * @param int $user_id
+     * @param string $name 空白除去・バリデーション済みの名前
+     * @return int 追加したカテゴリのID
+     */
+    public static function create($user_id, $name)
+    {
+        $now = date('Y-m-d H:i:s');
+
+        list($id, $rows) = \DB::insert('categories')
+            ->set(array(
+                'user_id'    => $user_id,
+                'name'       => $name,
+                'is_default' => 0,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ))
+            ->execute();
+
+        return $id;
+    }
+     /**
+     * 同名チェック
+     *
+     * @param int $user_id
+     * @param string $name 空白除去・バリデーション済みの名前
+     * @return bool
+     */
+    public static function exists_by_user_id_and_name($user_id,$name)
+    {
+        $result = \DB::select(\DB::expr('COUNT(*) AS cnt'))
+            ->from('categories')
+            ->where('user_id', '=',$user_id)
+            ->where('name', '=',$name)
+            ->execute()
+            ->current();
+        return $result['cnt'] > 0;
+    }
 }

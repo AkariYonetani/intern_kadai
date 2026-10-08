@@ -19,6 +19,8 @@
             <?php echo $content; ?>
         </main>
     </div>
+    <?php echo Asset::js('knockout-3.5.3.js'); ?>
+    <?php echo Asset::js('sidebar.js'); ?>
 </body>
 
 </html>

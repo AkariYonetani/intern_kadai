@@ -1,19 +1,22 @@
-<aside class="sidebar">
+<aside class="sidebar" data-categories="<?php echo $categories_json; ?>" data-base-url="<?php echo Uri::create('main/index/'); ?>" data-create-url="<?php echo Uri::create('category/create'); ?>">
     <nav>
         <h2>カテゴリ</h2>
-        <ul class="category-list">
-            <?php foreach ($categories as $category): ?>
-                <li class="category-item">
-                    <a href="<?php echo Uri::create('main/index/' . $category['id']); ?>">
-                        <span class="category-name"><?php echo $category['name']; ?></span>
-                        <span class="category-count"><?php echo $category['item_count']; ?></span>
-                    </a>
-                    <?php if ($category['is_default'] !== '1'): ?>
-                        <button type="button" class="category-menu" aria-label="カテゴリのメニュー">⋯</button>
-                    <?php endif; ?>
-                </li>
-            <?php endforeach; ?>
+        <ul class="category-list" data-bind="foreach: categories">
+            <li class="category-item">
+                <a data-bind="attr: { href:$root.baseUrl + id }">
+                    <span class="category-name" data-bind="text:name"></span>
+                    <span class="category-count" data-bind="text:item_count"></span>
+                </a>
+                <!-- ko if: is_default !=='1' -->
+                <button type="button" class="category-menu" aria-label="カテゴリのメニュー">⋯</button>
+                <!-- /ko -->
+            </li>
         </ul>
     </nav>
-    <!-- 「カテゴリを追加」はF-05で作る -->
+    <form data-bind="submit: addCategory">
+        <?php echo Form::csrf(); ?>
+        <input type="text" name="name" aria-label="カテゴリ名" maxlength="50" data-bind="textInput: newCategoryName" />
+        <p class="form-alert" role="alert" data-bind="visible: categoryError, text: categoryError"></p>
+        <button type="submit" data-bind="disable: isSubmitting">追加</button>
+    </form>
 </aside>
