@@ -8,7 +8,7 @@
         <ul class="item-list">
             <?php foreach ($items as $item): ?>
                 <li class="item-card">
-                    <p class="item-name"><?php echo $item['name'] ?></p>
+                    <p class="item-name"><a href="<?php echo Uri::create('item/detail/' . $item['id']); ?>"><?php echo $item['name'] ?></a></p>
                     <p class="item-desire"><?php echo $item['desire_level'] ?></p>
                     <?php if ($item['price'] !== null): ?>
                         <p class="item-price"><?php echo $item['price'] ?>円</p>
