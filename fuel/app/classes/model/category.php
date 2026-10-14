@@ -128,4 +128,22 @@ class Category
             ->where('is_default', '=', 0)
             ->execute();
     }
+
+    /**
+     * カテゴリを削除する
+     *
+     * 中身の欲しいものは、先に移動または削除しておくこと（外部キーにより、中身が残っていると削除できない）
+     *
+     * @param int $id カテゴリID
+     * @param int $user_id ユーザーID
+     * @return int 削除した行数
+     */
+    public static function delete_by_id_and_user_id($id, $user_id)
+    {
+        return \DB::delete('categories')
+            ->where('id', '=', $id)
+            ->where('user_id', '=', $user_id)
+            ->where('is_default', '=', 0)
+            ->execute();
+    }
 }
