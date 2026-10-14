@@ -1,21 +1,26 @@
-<section class="item-section">
+<section class="item-section"
+    data-items="<?php echo $items_json; ?>"
+    data-detail-url="<?php echo Uri::create('item/detail/'); ?>"
+    data-edit-url="<?php echo Uri::create('item/edit/'); ?>"
+    data-delete-url="<?php echo Uri::create('api/item/delete/'); ?>">
     <h1 class="category-title" data-category-id="<?php echo $category['id']; ?>"><?php echo $category['name']; ?></h1>
     <a class="item-add-button" href="<?php echo Uri::create('item/create/' . $category['id']); ?>">＋欲しいものを追加</a>
 
-    <?php if (empty($items)): ?>
-        <p class="empty-message">このカテゴリにはまだ欲しいものがありません</p>
-    <?php else: ?>
-        <ul class="item-list">
-            <?php foreach ($items as $item): ?>
-                <li class="item-card">
-                    <p class="item-name"><a href="<?php echo Uri::create('item/detail/' . $item['id']); ?>"><?php echo $item['name'] ?></a></p>
-                    <p class="item-desire"><?php echo $item['desire_level'] ?></p>
-                    <?php if ($item['price'] !== null): ?>
-                        <p class="item-price"><?php echo $item['price'] ?>円</p>
-                    <?php endif; ?>
-                    <a class="item-edit-button" href="<?php echo Uri::create('item/edit/' . $item['id']); ?>">編集</a>
-                </li>
-            <?php endforeach; ?>
-        </ul>
-    <?php endif; ?>
+    <p class="form-alert" role="alert" data-bind="visible: listError, text: listError"></p>
+
+    <!-- ko if: items().length === 0 -->
+    <p class="empty-message">このカテゴリにはまだ欲しいものがありません</p>
+    <!-- /ko -->
+
+    <ul class="item-list" data-bind="foreach: items">
+        <li class="item-card">
+            <p class="item-name"><a data-bind="attr: { href: $root.detailUrl + id }, text: name"></a></p>
+            <p class="item-desire" data-bind="text: desire_level"></p>
+            <!-- ko if: price !== null -->
+            <p class="item-price" data-bind="text: price + '円'"></p>
+            <!-- /ko -->
+            <a class="item-edit-button" data-bind="attr: { href: $root.editUrl + id }">編集</a>
+            <button type="button" class="item-delete-button" data-bind="click: $root.deleteItem, disable: $root.isDeleting">削除</button>
+        </li>
+    </ul>
 </section>

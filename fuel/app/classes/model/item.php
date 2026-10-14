@@ -115,6 +115,27 @@ class Item
     }
 
     /**
+     * 欲しいものを1件削除する
+     *
+     * 本人の欲しいものかはコントローラーでも確認済みだが、念のため条件に含める（update と同じ絞り方）
+     *
+     * @param int $id 欲しいもののID
+     * @param int $user_id ユーザーID
+     * @return int 削除した行数
+     */
+    public static function delete_by_id_and_user_id($id, $user_id)
+    {
+        $own_category_ids = \DB::select('id')
+            ->from('categories')
+            ->where('user_id', '=', $user_id);
+
+        return \DB::delete('items')
+            ->where('id', '=', $id)
+            ->where('category_id', 'IN', $own_category_ids)
+            ->execute();
+    }
+
+    /**
      * カテゴリに入っている欲しいものを、すべて別のカテゴリへ移す（カテゴリ削除の「未分類に移動」用）
      *
      * @param int $from_category_id 移動元のカテゴリID
