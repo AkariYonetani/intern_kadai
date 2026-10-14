@@ -8,7 +8,10 @@
                     <span class="category-count" data-bind="text:item_count"></span>
                 </a>
                 <!-- ko if: is_default !=='1' -->
-                <button type="button" class="category-menu" aria-label="カテゴリのメニュー">⋯</button>
+                <button type="button" class="category-menu-button" >⋯</button>
+                <div class="category-menu" data-bind="visible:$root==">
+                    <button type="button" class="category-edit" aria-label="カテゴリの編集">編集</button>
+                </div>
                 <!-- /ko -->
             </li>
         </ul>
