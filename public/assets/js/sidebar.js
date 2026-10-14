@@ -4,6 +4,8 @@ const initialCategories = JSON.parse(sidebarEl.dataset.categories);
 const baseUrl = sidebarEl.dataset.baseUrl;
 const createUrl = sidebarEl.dataset.createUrl;
 const updateUrl = sidebarEl.dataset.updateUrl;
+const deleteUrl = sidebarEl.dataset.deleteUrl;
+const deleteDialog = sidebarEl.querySelector(".category-delete-dialog");
 
 // CSRFトークン。サーバーは送信のたびに新しいトークンを返すので、ここで受け取って次の送信に使う
 let csrfToken = sidebarEl.querySelector('input[name="fuel_csrf_token"]').value;
@@ -40,6 +42,12 @@ const viewModel = {
     editName: ko.observable(""),
     editError: ko.observable(""),
     isUpdating: ko.observable(false),
+
+    // 削除ポップアップに出すカテゴリの情報
+    deleteName: ko.observable(""),
+    deleteCount: ko.observable(0),
+    deleteAction: ko.observable(""),
+    isDeleting: ko.observable(false),
 
     addCategory: async function (form) {
         if (viewModel.isSubmitting()) {
@@ -90,6 +98,29 @@ const viewModel = {
 
     cancelEdit: function () {
         viewModel.editingId(null);
+    },
+
+    startDelete: function (category) {
+        viewModel.openMenuId(null);
+        viewModel.deleteName(category.name());
+        viewModel.deleteCount(Number(category.item_count));
+        viewModel.deleteAction(deleteUrl + category.id);
+        viewModel.isDeleting(false);
+        deleteDialog.showModal();
+    },
+
+    closeDelete: function () {
+        deleteDialog.close();
+    },
+
+    // 削除フォームの送信（ボタンの連打で二重に送らないようにする）
+    submitDelete: function () {
+        if (viewModel.isDeleting()) {
+            return false;
+        }
+        viewModel.isDeleting(true);
+        // true を返すと、knockout が止めずに通常のフォーム送信を行う
+        return true;
     },
 
     saveEdit: async function (form) {

@@ -16,6 +16,12 @@
     <div class="layout">
         <?php echo $sidebar; ?>
         <main class="main">
+            <?php if ($flash_success): ?>
+                <p class="flash flash-success" role="status"><?php echo $flash_success; ?></p>
+            <?php endif; ?>
+            <?php if ($flash_error): ?>
+                <p class="flash flash-error" role="alert"><?php echo $flash_error; ?></p>
+            <?php endif; ?>
             <?php echo $content; ?>
         </main>
     </div>
