@@ -18,13 +18,13 @@ function updateCsrfToken(token) {
     });
 }
 
-// サーバーから受け取ったカテゴリを画面用の形にする。名前は変更できるように observable にする
+// サーバーから受け取ったカテゴリを画面用の形にする。名前と件数は変わるので observable にする
 function toCategory(data) {
     return {
         id: String(data.id),
         name: ko.observable(data.name),
         is_default: String(data.is_default),
-        item_count: data.item_count,
+        item_count: ko.observable(Number(data.item_count)),
     };
 }
 
@@ -103,7 +103,7 @@ const viewModel = {
     startDelete: function (category) {
         viewModel.openMenuId(null);
         viewModel.deleteName(category.name());
-        viewModel.deleteCount(Number(category.item_count));
+        viewModel.deleteCount(category.item_count());
         viewModel.deleteAction(deleteUrl + category.id);
         viewModel.isDeleting(false);
         deleteDialog.showModal();

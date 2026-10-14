@@ -1,0 +1,60 @@
+// メイン画面の欲しいもの一覧（knockout と sidebar.js のあとに読み込む）
+const itemSection = document.querySelector(".item-section");
+
+const itemListModel = {
+    items: ko.observableArray(JSON.parse(itemSection.dataset.items)),
+    detailUrl: itemSection.dataset.detailUrl,
+    editUrl: itemSection.dataset.editUrl,
+    listError: ko.observable(""),
+    // 削除の通信中は、すべての「削除」ボタンを押せなくする（連打対策）
+    isDeleting: ko.observable(false),
+
+    deleteItem: async function (item) {
+        if (itemListModel.isDeleting()) {
+            return;
+        }
+        if (!confirm("『" + item.name + "』を削除します。この操作は元に戻せません。")) {
+            return;
+        }
+        itemListModel.isDeleting(true);
+        itemListModel.listError("");
+
+        // トークンは sidebar.js で一元管理しているものを使う
+        const body = new FormData();
+        body.append("fuel_csrf_token", csrfToken);
+
+        try {
+            const response = await fetch(itemSection.dataset.deleteUrl + item.id, {
+                method: "POST",
+                body: body,
+            });
+            const data = await response.json();
+
+            if (data.token) {
+                updateCsrfToken(data.token);
+            }
+
+            if (!response.ok) {
+                itemListModel.listError(data.error);
+                return;
+            }
+
+            // 一覧から消す。最後の1件なら「まだ欲しいものがありません」が表示される
+            itemListModel.items.remove(item);
+
+            // サイドバーの件数を1減らす
+            const category = viewModel.categories().find(function (c) {
+                return c.id === String(data.category_id);
+            });
+            if (category) {
+                category.item_count(category.item_count() - 1);
+            }
+        } catch (e) {
+            itemListModel.listError("通信に失敗しました。もう一度お試しください");
+        } finally {
+            itemListModel.isDeleting(false);
+        }
+    },
+};
+
+ko.applyBindings(itemListModel, itemSection);

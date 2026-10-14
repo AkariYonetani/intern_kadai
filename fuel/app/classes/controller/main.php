@@ -27,11 +27,13 @@ class Controller_Main extends Controller_Base
             }
         }
 
+        // 一覧の表示は knockout で行うので、データをJSONにして渡す
         $items = \Model\Item::find_by_category_id($category['id']);
         $this->template->title = 'ホーム';
+        $this->template->page_js = 'item_list.js';
         $this->template->content = View::forge('main/index', array(
-            'category' => $category,
-            'items'    => $items,
+            'category'   => $category,
+            'items_json' => json_encode($items),
         ));
     }
 
