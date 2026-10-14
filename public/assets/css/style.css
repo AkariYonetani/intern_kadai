@@ -13,6 +13,7 @@
     --color-text-sub: #666666; /* 副題 */
     --color-text-inverse: #ffffff; /* 黒いボタンの上の文字 */
     --color-error: #a82a2a; /* エラー文・エラーの枠 */
+    --color-selected: #e5e5e5; /* 選択中・メニューを開いている行 */
     /* 角丸 */
     --radius-s: 5px;
     --radius-m: 8px;
@@ -32,4 +33,8 @@ body {
 }
 .sidebar {
     background-color: var(--color-surface);
+}
+.category-item.is-menu-open {
+    background-color: var(--color-selected);
+    border-radius: var(--radius-m);
 }

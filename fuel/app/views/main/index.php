@@ -1,5 +1,5 @@
 <section class="item-section">
-    <h1><?php echo $category['name']; ?></h1>
+    <h1 class="category-title" data-category-id="<?php echo $category['id']; ?>"><?php echo $category['name']; ?></h1>
 
     <?php if (empty($items)): ?>
         <p class="empty-message">このカテゴリにはまだ欲しいものがありません</p>

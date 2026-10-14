@@ -90,16 +90,42 @@ class Category
      *
      * @param int $user_id
      * @param string $name 空白除去・バリデーション済みの名前
+     * @param int|null $exclude_id チェックから外すカテゴリID（編集時に自分自身を除くため）
      * @return bool
      */
-    public static function exists_by_user_id_and_name($user_id,$name)
+    public static function exists_by_user_id_and_name($user_id, $name, $exclude_id = null)
     {
-        $result = \DB::select(\DB::expr('COUNT(*) AS cnt'))
+        $query = \DB::select(\DB::expr('COUNT(*) AS cnt'))
             ->from('categories')
-            ->where('user_id', '=',$user_id)
-            ->where('name', '=',$name)
-            ->execute()
-            ->current();
+            ->where('user_id', '=', $user_id)
+            ->where('name', '=', $name);
+        if ($exclude_id !== null) {
+            $query->where('id', '!=', $exclude_id);
+        }
+        $result = $query->execute()->current();
         return $result['cnt'] > 0;
+    }
+
+    /**
+     * カテゴリ名を変更する
+     *
+     * 本人のカテゴリで、未分類でないものだけを更新する（コントローラーでも確認済みだが、念のため条件に含める）
+     *
+     * @param int $id カテゴリID
+     * @param int $user_id ユーザーID
+     * @param string $name 空白除去・バリデーション済みの名前
+     * @return int 更新した行数
+     */
+    public static function update_name($id, $user_id, $name)
+    {
+        return \DB::update('categories')
+            ->set(array(
+                'name'       => $name,
+                'updated_at' => date('Y-m-d H:i:s'),
+            ))
+            ->where('id', '=', $id)
+            ->where('user_id', '=', $user_id)
+            ->where('is_default', '=', 0)
+            ->execute();
     }
 }
