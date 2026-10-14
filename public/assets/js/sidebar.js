@@ -122,6 +122,12 @@ const viewModel = {
 
             category.name(data.name);
             viewModel.editingId(null);
+
+            // 今開いているカテゴリなら、メイン画面の見出しも新しい名前にする
+            const title = document.querySelector(".category-title");
+            if (title && title.dataset.categoryId === category.id) {
+                title.textContent = data.name;
+            }
         } catch (e) {
             viewModel.editError("通信に失敗しました。もう一度お試しください");
         } finally {
