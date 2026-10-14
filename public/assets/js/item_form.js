@@ -1,4 +1,4 @@
-// 欲しいもの登録フォーム（knockout と sidebar.js のあとに読み込む）
+// 欲しいもの登録・編集フォーム（knockout と sidebar.js のあとに読み込む）
 const itemFormSection = document.querySelector(".item-form-section");
 const itemForm = itemFormSection.querySelector("form");
 const itemNameInput = itemForm.querySelector('input[name="name"]');
@@ -32,7 +32,7 @@ itemFormModel.nameCount = ko.pureComputed(function () {
     return Array.from(itemFormModel.name()).length + "/" + itemNameInput.maxLength;
 });
 
-// 見出し。選択欄で選んでいるカテゴリの名前を入れる
+// 見出し（登録画面のみ）。選択欄で選んでいるカテゴリの名前を入れる。編集画面の見出しは編集前の名前で固定するので使わない
 itemFormModel.title = ko.pureComputed(function () {
     const id = itemFormModel.categoryId();
     const category = itemFormModel.categories().find(function (c) {
