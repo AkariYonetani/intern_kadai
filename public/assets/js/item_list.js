@@ -57,4 +57,44 @@ const itemListModel = {
     },
 };
 
+// 選んでいる並び順（リロードするとデフォルトに戻る）
+itemListModel.sortKey = ko.observable("default");
+
+// 並び替えた一覧。items（サーバーから来た、登録が新しい順）はそのまま残し、並び替えた写しを表示する
+itemListModel.sortedItems = ko.pureComputed(function () {
+    const items = itemListModel.items();
+    const key = itemListModel.sortKey();
+    if (key === "default") {
+        return items;
+    }
+
+    // 同じ値のときは元の順番（登録が新しい順）を保つため、元の位置を覚えておく
+    const position = new Map();
+    items.forEach(function (item, index) {
+        position.set(item, index);
+    });
+
+    return items.slice().sort(function (a, b) {
+        let diff = 0;
+        if (key === "desire_desc") {
+            diff = Number(b.desire_level) - Number(a.desire_level);
+        } else {
+            // 金額が未入力のものは、安い順でも高い順でも末尾にする
+            if (a.price === null && b.price !== null) {
+                return 1;
+            }
+            if (a.price !== null && b.price === null) {
+                return -1;
+            }
+            if (a.price !== null && b.price !== null) {
+                // JSONの数値は文字列で届くので、数にしてから比べる
+                diff = key === "price_asc"
+                    ? Number(a.price) - Number(b.price)
+                    : Number(b.price) - Number(a.price);
+            }
+        }
+        return diff !== 0 ? diff : position.get(a) - position.get(b);
+    });
+});
+
 ko.applyBindings(itemListModel, itemSection);
