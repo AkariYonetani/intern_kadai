@@ -27,6 +27,9 @@
     </div>
     <?php echo Asset::js('knockout-3.5.3.js'); ?>
     <?php echo Asset::js('sidebar.js'); ?>
+    <?php if (isset($page_js)): ?>
+        <?php echo Asset::js($page_js); ?>
+    <?php endif; ?>
 </body>
 
 </html>
