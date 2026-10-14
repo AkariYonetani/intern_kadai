@@ -26,6 +26,32 @@ class Item
     }
 
     /**
+     * 欲しいものを登録する
+     *
+     * @param array $values category_id, name, desire_level, reason, url, price（バリデーション済み。任意項目の未入力は null）
+     * @return int 追加した欲しいもののID
+     */
+    public static function create(array $values)
+    {
+        $now = date('Y-m-d H:i:s');
+
+        list($id, $rows) = \DB::insert('items')
+            ->set(array(
+                'category_id'  => $values['category_id'],
+                'name'         => $values['name'],
+                'desire_level' => $values['desire_level'],
+                'reason'       => $values['reason'],
+                'url'          => $values['url'],
+                'price'        => $values['price'],
+                'created_at'   => $now,
+                'updated_at'   => $now,
+            ))
+            ->execute();
+
+        return $id;
+    }
+
+    /**
      * カテゴリに入っている欲しいものを、すべて別のカテゴリへ移す（カテゴリ削除の「未分類に移動」用）
      *
      * @param int $from_category_id 移動元のカテゴリID

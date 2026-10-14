@@ -1,5 +1,6 @@
 <section class="item-section">
     <h1 class="category-title" data-category-id="<?php echo $category['id']; ?>"><?php echo $category['name']; ?></h1>
+    <a class="item-add-button" href="<?php echo Uri::create('item/create/' . $category['id']); ?>">＋欲しいものを追加</a>
 
     <?php if (empty($items)): ?>
         <p class="empty-message">このカテゴリにはまだ欲しいものがありません</p>
