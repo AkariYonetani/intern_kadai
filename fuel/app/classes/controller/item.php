@@ -1,7 +1,7 @@
 <?php
 
 /**
- * 欲しいものの登録・詳細画面
+ * 欲しいものの登録・詳細・編集画面
  */
 class Controller_Item extends Controller_Base
 {
@@ -42,40 +42,19 @@ class Controller_Item extends Controller_Base
         $errors = array();
 
         if (Input::method() === 'POST') {
-            $input = array(
-                'name'         => static::trim_space(Input::post('name', '')),
-                'category_id'  => Input::post('category_id', ''),
-                'desire_level' => Input::post('desire_level', ''),
-                'reason'       => static::trim_space(Input::post('reason', '')),
-                'url'          => static::trim_space(Input::post('url', '')),
-                // 全角数字は半角に、カンマは取り除く（「１，０００」→「1000」）
-                'price'        => str_replace(array(',', '，'), '', mb_convert_kana(static::trim_space(Input::post('price', '')), 'n')),
-            );
+            $input = $this->read_input();
 
             if (! Security::check_token()) {
                 $errors['form'] = 'ページの有効期限が切れました。もう一度送信してください。';
             } else {
                 $errors = $this->validate($input);
-
-                // カテゴリ：未選択なら未分類、選ばれていれば本人のものか確かめる
-                if ($input['category_id'] === '') {
-                    $selected = \Model\Category::find_default_by_user_id($user_id);
-                } else {
-                    $selected = \Model\Category::find_by_id_and_user_id($input['category_id'], $user_id);
-                    if ($selected === null) {
-                        $errors['category_id'] = 'カテゴリを選び直してください';
-                    }
+                $selected = $this->find_selected_category($input['category_id'], $user_id);
+                if ($selected === null) {
+                    $errors['category_id'] = 'カテゴリを選び直してください';
                 }
 
                 if (empty($errors)) {
-                    \Model\Item::create(array(
-                        'category_id'  => $selected['id'],
-                        'name'         => $input['name'],
-                        'desire_level' => (int) $input['desire_level'],
-                        'reason'       => $input['reason'] === '' ? null : $input['reason'],
-                        'url'          => $input['url'] === '' ? null : $input['url'],
-                        'price'        => $input['price'] === '' ? null : (int) $input['price'],
-                    ));
+                    \Model\Item::create($this->to_item_values($input, $selected['id']));
 
                     Session::set_flash('success', '『' . $input['name'] . '』を登録しました');
                     Response::redirect('main/index/' . $selected['id']);
@@ -118,6 +97,117 @@ class Controller_Item extends Controller_Base
             'url_is_link' => $url_is_link,
             'desire_max'  => Config::get('wishlist.desire_level.max'),
         ));
+    }
+
+    /**
+     * 欲しいもの編集（表示と保存の両方を受ける）
+     *
+     * @param string|null $id URLで指定された欲しいもののID
+     */
+    public function action_edit($id = null)
+    {
+        $user_id = Session::get('user_id');
+
+        // 本人の欲しいものか確かめる。他人のもの・存在しないIDは同じ扱いにする
+        $item = \Model\Item::find_by_id_and_user_id($id, $user_id);
+        if ($item === null) {
+            Session::set_flash('error', '欲しいものが見つかりません');
+            Response::redirect('main/index');
+        }
+
+        // 登録済みの値をフォームに入れる（未入力の項目は null なので空文字にする）
+        $input = array(
+            'name'         => $item['name'],
+            'category_id'  => $item['category_id'],
+            'desire_level' => $item['desire_level'],
+            'reason'       => (string) $item['reason'],
+            'url'          => (string) $item['url'],
+            'price'        => (string) $item['price'],
+        );
+        $errors = array();
+
+        if (Input::method() === 'POST') {
+            $input = $this->read_input();
+
+            if (! Security::check_token()) {
+                $errors['form'] = 'ページの有効期限が切れました。もう一度送信してください。';
+            } else {
+                $errors = $this->validate($input);
+                $selected = $this->find_selected_category($input['category_id'], $user_id);
+                if ($selected === null) {
+                    $errors['category_id'] = 'カテゴリを選び直してください';
+                }
+
+                if (empty($errors)) {
+                    \Model\Item::update($item['id'], $user_id, $this->to_item_values($input, $selected['id']));
+
+                    // カテゴリを変えた場合は移動先の一覧に戻るので、移動したことがすぐ分かる
+                    Session::set_flash('success', '『' . $input['name'] . '』を保存しました');
+                    Response::redirect('main/index/' . $selected['id']);
+                }
+            }
+        }
+
+        $this->template->title = '欲しいもの編集';
+        $this->template->page_js = 'item_form.js';
+        $this->template->content = View::forge('item/edit', array(
+            'input'      => $input,
+            'errors'     => $errors,
+            'item'       => $item,
+            'desire_max' => Config::get('wishlist.desire_level.max'),
+        ));
+    }
+
+    /**
+     * POSTされた値を整える（登録・編集で共通）
+     *
+     * @return array
+     */
+    protected function read_input()
+    {
+        return array(
+            'name'         => static::trim_space(Input::post('name', '')),
+            'category_id'  => Input::post('category_id', ''),
+            'desire_level' => Input::post('desire_level', ''),
+            'reason'       => static::trim_space(Input::post('reason', '')),
+            'url'          => static::trim_space(Input::post('url', '')),
+            // 全角数字は半角に、カンマは取り除く（「１，０００」→「1000」）
+            'price'        => str_replace(array(',', '，'), '', mb_convert_kana(static::trim_space(Input::post('price', '')), 'n')),
+        );
+    }
+
+    /**
+     * 選ばれたカテゴリを確かめる（登録・編集で共通）
+     *
+     * @param string $category_id フォームから送られたカテゴリID
+     * @param int $user_id ユーザーID
+     * @return array|null 未選択なら未分類、本人のカテゴリならそのカテゴリ。他人のもの・存在しないIDは null
+     */
+    protected function find_selected_category($category_id, $user_id)
+    {
+        if ($category_id === '') {
+            return \Model\Category::find_default_by_user_id($user_id);
+        }
+        return \Model\Category::find_by_id_and_user_id($category_id, $user_id);
+    }
+
+    /**
+     * 入力をDBに保存する形にする（登録・編集で共通）
+     *
+     * @param array $input 入力チェック済みの値
+     * @param int $category_id 確認済みのカテゴリID
+     * @return array 任意項目の未入力は null
+     */
+    protected function to_item_values(array $input, $category_id)
+    {
+        return array(
+            'category_id'  => $category_id,
+            'name'         => $input['name'],
+            'desire_level' => (int) $input['desire_level'],
+            'reason'       => $input['reason'] === '' ? null : $input['reason'],
+            'url'          => $input['url'] === '' ? null : $input['url'],
+            'price'        => $input['price'] === '' ? null : (int) $input['price'],
+        );
     }
 
     /**

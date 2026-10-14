@@ -13,6 +13,7 @@
                     <?php if ($item['price'] !== null): ?>
                         <p class="item-price"><?php echo $item['price'] ?>円</p>
                     <?php endif; ?>
+                    <a class="item-edit-button" href="<?php echo Uri::create('item/edit/' . $item['id']); ?>">編集</a>
                 </li>
             <?php endforeach; ?>
         </ul>

@@ -83,6 +83,38 @@ class Item
     }
 
     /**
+     * 欲しいものを更新する
+     *
+     * 本人の欲しいものかはコントローラーでも確認済みだが、念のため条件に含める
+     * （items には user_id がないので、本人のカテゴリに入っているものだけに絞る）
+     *
+     * @param int $id 欲しいもののID
+     * @param int $user_id ユーザーID
+     * @param array $values category_id, name, desire_level, reason, url, price（バリデーション済み。任意項目の未入力は null）
+     * @return int 更新した行数
+     */
+    public static function update($id, $user_id, array $values)
+    {
+        $own_category_ids = \DB::select('id')
+            ->from('categories')
+            ->where('user_id', '=', $user_id);
+
+        return \DB::update('items')
+            ->set(array(
+                'category_id'  => $values['category_id'],
+                'name'         => $values['name'],
+                'desire_level' => $values['desire_level'],
+                'reason'       => $values['reason'],
+                'url'          => $values['url'],
+                'price'        => $values['price'],
+                'updated_at'   => date('Y-m-d H:i:s'),
+            ))
+            ->where('id', '=', $id)
+            ->where('category_id', 'IN', $own_category_ids)
+            ->execute();
+    }
+
+    /**
      * カテゴリに入っている欲しいものを、すべて別のカテゴリへ移す（カテゴリ削除の「未分類に移動」用）
      *
      * @param int $from_category_id 移動元のカテゴリID
