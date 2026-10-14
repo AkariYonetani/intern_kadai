@@ -26,6 +26,37 @@ class Item
     }
 
     /**
+     * 本人の欲しいものを1件取得する（詳細表示用）
+     *
+     * items には user_id がないので、categories をたどって持ち主を確かめる
+     *
+     * @param int $id 欲しいもののID
+     * @param int $user_id ユーザーID
+     * @return array|null 欲しいもの（カテゴリ名 category_name を含む）。他人のもの・存在しないIDは null
+     */
+    public static function find_by_id_and_user_id($id, $user_id)
+    {
+        $result = \DB::select(
+                'items.id',
+                'items.category_id',
+                'items.name',
+                'items.desire_level',
+                'items.reason',
+                'items.url',
+                'items.price',
+                array('categories.name', 'category_name')
+            )
+            ->from('items')
+            ->join('categories', 'INNER')
+            ->on('categories.id', '=', 'items.category_id')
+            ->where('items.id', '=', $id)
+            ->where('categories.user_id', '=', $user_id)
+            ->execute()
+            ->current();
+        return $result;
+    }
+
+    /**
      * 欲しいものを登録する
      *
      * @param array $values category_id, name, desire_level, reason, url, price（バリデーション済み。任意項目の未入力は null）

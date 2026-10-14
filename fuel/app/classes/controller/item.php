@@ -1,7 +1,7 @@
 <?php
 
 /**
- * 欲しいものの登録画面
+ * 欲しいものの登録・詳細画面
  */
 class Controller_Item extends Controller_Base
 {
@@ -89,6 +89,33 @@ class Controller_Item extends Controller_Base
             'input'       => $input,
             'errors'      => $errors,
             'category'    => $category,
+            'desire_max'  => Config::get('wishlist.desire_level.max'),
+        ));
+    }
+
+    /**
+     * 欲しいもの詳細
+     *
+     * @param string|null $id URLで指定された欲しいもののID
+     */
+    public function action_detail($id = null)
+    {
+        $user_id = Session::get('user_id');
+
+        // 本人の欲しいものか確かめる。他人のもの・存在しないIDは同じ扱いにする
+        $item = \Model\Item::find_by_id_and_user_id($id, $user_id);
+        if ($item === null) {
+            Session::set_flash('error', '欲しいものが見つかりません');
+            Response::redirect('main/index');
+        }
+
+        // 保存時にも確認しているが、DBに直接入ったデータに備えて、表示時にも http(s):// で始まるか確かめる
+        $url_is_link = $item['url'] !== null && preg_match('/\Ahttps?:\/\//i', $item['url']) === 1;
+
+        $this->template->title = $item['name'];
+        $this->template->content = View::forge('item/detail', array(
+            'item'        => $item,
+            'url_is_link' => $url_is_link,
             'desire_max'  => Config::get('wishlist.desire_level.max'),
         ));
     }
