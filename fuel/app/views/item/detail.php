@@ -4,6 +4,10 @@
     <p class="item-detail-category"><?php echo $item['category_name']; ?></p>
     <h1><?php echo $item['name']; ?></h1>
 
+    <?php if ($item['image_path'] !== null): ?>
+        <img class="item-detail-image" src="<?php echo ItemImage::url($item['id'], $item['image_path']); ?>" alt="<?php echo $item['name']; ?>">
+    <?php endif; ?>
+
     <p class="item-detail-desire" aria-label="欲しい度合い <?php echo $item['desire_level']; ?>/<?php echo $desire_max; ?>">
         <?php for ($i = 1; $i <= $desire_max; $i++): ?>
             <span aria-hidden="true"><?php echo $i <= $item['desire_level'] ? '★' : '☆'; ?></span>

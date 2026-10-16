@@ -78,12 +78,15 @@ class Controller_Main extends Controller_Base
         }
 
         // 欲しいものの移動（または削除）とカテゴリの削除を、まとめて成功させるか、まとめて取り消す
+        $image_paths = array();
         \DB::start_transaction();
         try {
             if ($mode === 'move') {
                 $default = \Model\Category::find_default_by_user_id($user_id);
                 \Model\Item::move_all_to_category($category['id'], $default['id']);
             } else {
+                // 行を消すとファイル名が分からなくなるので、先に取っておく
+                $image_paths = \Model\Item::find_image_paths_by_category_id($category['id']);
                 \Model\Item::delete_by_category_id($category['id']);
             }
             if (\Model\Category::delete_by_id_and_user_id($category['id'], $user_id) !== 1) {
@@ -94,6 +97,11 @@ class Controller_Main extends Controller_Base
             \DB::rollback_transaction();
             Session::set_flash('error', '削除に失敗しました。もう一度お試しください');
             Response::redirect('main/index');
+        }
+
+        // 画像ファイルは、DBの削除が確定（コミット）してから消す。先に消すと、DBが取り消しになったときに画像だけ失われる
+        foreach ($image_paths as $image_path) {
+            ItemImage::delete($image_path);
         }
 
         Session::set_flash('success', '『' . $category['name'] . '』を削除しました');

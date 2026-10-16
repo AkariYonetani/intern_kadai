@@ -34,10 +34,68 @@ body {
 .sidebar {
     background-color: var(--color-surface);
 }
+/* 入力欄の下のエラー文（parts/field_err.php と画像欄） */
+.error {
+    color: var(--color-error);
+}
 .item-detail-reason {
     white-space: pre-wrap; /* 入力した改行をそのまま表示する */
 }
 .category-item.is-menu-open {
     background-color: var(--color-selected);
     border-radius: var(--radius-m);
+}
+/* 見えないが、キーボード操作や読み上げでは使える（display: none だとフォーカスできなくなる） */
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+}
+/* 画像欄：点線の枠全体がファイル選択のボタンになる */
+.image-picker {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 160px;
+    padding: 16px;
+    border: 2px dashed var(--color-rules);
+    border-radius: var(--radius-m);
+    background-color: var(--color-surface);
+    cursor: pointer;
+}
+.image-picker.is-error {
+    border-color: var(--color-error);
+}
+#item-image:focus-visible + .image-picker {
+    outline: 2px solid var(--color-text);
+    outline-offset: 2px;
+}
+.image-picker-hint {
+    color: var(--color-text-sub);
+}
+.image-preview {
+    max-width: 100%;
+    max-height: 240px;
+    object-fit: contain;
+}
+/* 一覧のカードの画像。画像がないときは灰色の枠 */
+.item-image {
+    display: block;
+    width: 160px;
+    height: 160px;
+    object-fit: cover;
+    border-radius: var(--radius-s);
+}
+.item-image-empty {
+    background-color: var(--color-selected);
+}
+.item-detail-image {
+    max-width: 100%;
+    max-height: 400px;
+    object-fit: contain;
 }
