@@ -1,6 +1,7 @@
 <section class="item-section"
     data-items="<?php echo $items_json; ?>"
     data-detail-url="<?php echo Uri::create('item/detail/'); ?>"
+    data-image-url="<?php echo Uri::create('api/item/image/'); ?>"
     data-edit-url="<?php echo Uri::create('item/edit/'); ?>"
     data-delete-url="<?php echo Uri::create('api/item/delete/'); ?>">
     <h1 class="category-title" data-category-id="<?php echo $category['id']; ?>"><?php echo $category['name']; ?></h1>
@@ -21,6 +22,15 @@
 
     <ul class="item-list" data-bind="foreach: sortedItems">
         <li class="item-card">
+            <!-- 画像も詳細へのリンクにする。画像がないときは灰色の枠を出して、カードの形をそろえる -->
+            <a class="item-image-link" tabindex="-1" aria-hidden="true" data-bind="attr: { href: $root.detailUrl + id }">
+                <!-- ko if: image_path !== null -->
+                <img class="item-image" alt="" loading="lazy" data-bind="attr: { src: $root.imageUrl + id + '?v=' + encodeURIComponent(image_path) }">
+                <!-- /ko -->
+                <!-- ko if: image_path === null -->
+                <span class="item-image item-image-empty"></span>
+                <!-- /ko -->
+            </a>
             <p class="item-name"><a data-bind="attr: { href: $root.detailUrl + id }, text: name"></a></p>
             <p class="item-desire" data-bind="text: desire_level"></p>
             <!-- ko if: price !== null -->

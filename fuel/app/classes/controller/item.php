@@ -36,7 +36,9 @@ class Controller_Item extends Controller_Base
         if (Input::method() === 'POST') {
             $input = $this->read_input();
 
-            if (! Security::check_token()) {
+            if (static::is_post_too_large()) {
+                $errors['form'] = static::post_too_large_message();
+            } elseif (! Security::check_token()) {
                 $errors['form'] = 'ページの有効期限が切れました。もう一度送信してください。';
             } else {
                 $errors = $this->validate($input);
@@ -44,9 +46,18 @@ class Controller_Item extends Controller_Base
                 if ($selected === null) {
                     $errors['category_id'] = 'カテゴリを選び直してください';
                 }
+                $image = $this->read_image($errors);
 
                 if (empty($errors)) {
-                    \Model\Item::create($this->to_item_values($input, $selected['id']));
+                    $values = $this->to_item_values($input, $selected['id']);
+                    $values['image_path'] = $image === null ? null : ItemImage::save($image);
+                    try {
+                        \Model\Item::create($values);
+                    } catch (\Exception $e) {
+                        // DBに入らなかったので、保存した画像はどこからも使われない。残さずに消す
+                        ItemImage::delete($values['image_path']);
+                        throw $e;
+                    }
 
                     Session::set_flash('success', '『' . $input['name'] . '』を登録しました');
                     Response::redirect('main/index/' . $selected['id']);
@@ -57,10 +68,11 @@ class Controller_Item extends Controller_Base
         $this->template->title = '欲しいもの登録';
         $this->template->page_js = 'item_form.js';
         $this->template->content = View::forge('item/create', array(
-            'input'       => $input,
-            'errors'      => $errors,
-            'category'    => $category,
-            'desire_max'  => Config::get('wishlist.desire_level.max'),
+            'input'          => $input,
+            'errors'         => $errors,
+            'category'       => $category,
+            'desire_max'     => Config::get('wishlist.desire_level.max'),
+            'image_max_size' => Config::get('wishlist.image.max_size'),
         ));
     }
 
@@ -121,7 +133,9 @@ class Controller_Item extends Controller_Base
         if (Input::method() === 'POST') {
             $input = $this->read_input();
 
-            if (! Security::check_token()) {
+            if (static::is_post_too_large()) {
+                $errors['form'] = static::post_too_large_message();
+            } elseif (! Security::check_token()) {
                 $errors['form'] = 'ページの有効期限が切れました。もう一度送信してください。';
             } else {
                 $errors = $this->validate($input);
@@ -129,9 +143,25 @@ class Controller_Item extends Controller_Base
                 if ($selected === null) {
                     $errors['category_id'] = 'カテゴリを選び直してください';
                 }
+                $image = $this->read_image($errors);
 
                 if (empty($errors)) {
-                    \Model\Item::update($item['id'], $user_id, $this->to_item_values($input, $selected['id']));
+                    // 画像を選ばなかったときは、今の画像をそのまま使う
+                    $values = $this->to_item_values($input, $selected['id']);
+                    $values['image_path'] = $image === null ? $item['image_path'] : ItemImage::save($image);
+
+                    // 差し替えは「新しい画像を保存 → DBを更新 → 古い画像を削除」の順。途中で失敗しても、DBが指す画像は必ずある
+                    try {
+                        \Model\Item::update($item['id'], $user_id, $values);
+                    } catch (\Exception $e) {
+                        if ($image !== null) {
+                            ItemImage::delete($values['image_path']);
+                        }
+                        throw $e;
+                    }
+                    if ($image !== null) {
+                        ItemImage::delete($item['image_path']);
+                    }
 
                     // カテゴリを変えた場合は移動先の一覧に戻るので、移動したことがすぐ分かる
                     Session::set_flash('success', '『' . $input['name'] . '』を保存しました');
@@ -143,11 +173,60 @@ class Controller_Item extends Controller_Base
         $this->template->title = '欲しいもの編集';
         $this->template->page_js = 'item_form.js';
         $this->template->content = View::forge('item/edit', array(
-            'input'      => $input,
-            'errors'     => $errors,
-            'item'       => $item,
-            'desire_max' => Config::get('wishlist.desire_level.max'),
+            'input'          => $input,
+            'errors'         => $errors,
+            'item'           => $item,
+            'desire_max'     => Config::get('wishlist.desire_level.max'),
+            'image_max_size' => Config::get('wishlist.image.max_size'),
         ));
+    }
+
+    /**
+     * 選ばれた画像を受け取って確かめる（登録・編集で共通）
+     *
+     * @param array $errors ほかの項目の入力エラー。画像のエラーもここに足す
+     * @return array|null 保存してよい画像（Input::file の値）。選ばれていない・エラーのときは null
+     */
+    protected function read_image(array &$errors)
+    {
+        $file = Input::file('image');
+        if ($file === null || $file['error'] === UPLOAD_ERR_NO_FILE) {
+            return null;
+        }
+
+        $error = ItemImage::validate($file);
+        if ($error !== null) {
+            $errors['image'] = $error;
+            return null;
+        }
+
+        // ほかの項目にエラーがあると、この画像は保存しない。ファイル欄はブラウザの仕組み上もとに戻せないので、選び直してもらう
+        if (! empty($errors)) {
+            $errors['image'] = 'ほかの項目にエラーがあったため、画像は保存していません。もう一度選んでください';
+            return null;
+        }
+        return $file;
+    }
+
+    /**
+     * 送信されたデータが大きすぎて、PHPが中身を捨てたか
+     *
+     * php.ini の post_max_size（8MB）を超えると、$_POST も $_FILES も空になる。
+     * そのままだと CSRF トークンもないので「有効期限切れ」と出てしまうため、先に見分ける
+     *
+     * @return bool
+     */
+    protected static function is_post_too_large()
+    {
+        return empty($_POST) && empty($_FILES) && (int) Input::server('CONTENT_LENGTH', 0) > 0;
+    }
+
+    /**
+     * @return string
+     */
+    protected static function post_too_large_message()
+    {
+        return '画像のサイズが大きすぎます。' . (Config::get('wishlist.image.max_size') / 1024 / 1024) . 'MB 以内のファイルを選んでください';
     }
 
     /**

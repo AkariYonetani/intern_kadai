@@ -4,6 +4,9 @@ const itemSection = document.querySelector(".item-section");
 const itemListModel = {
     items: ko.observableArray(JSON.parse(itemSection.dataset.items)),
     detailUrl: itemSection.dataset.detailUrl,
+    // 画像は api/item/image/{ID} から本人確認を通して受け取る
+    // 一覧では ?v=ファイル名 を付ける（差し替えるとURLが変わり、ブラウザのキャッシュの古い画像が出ないようにする）
+    imageUrl: itemSection.dataset.imageUrl,
     editUrl: itemSection.dataset.editUrl,
     listError: ko.observable(""),
     // 削除の通信中は、すべての「削除」ボタンを押せなくする（連打対策）

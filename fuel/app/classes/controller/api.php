@@ -20,5 +20,8 @@ abstract class Controller_Api extends Controller_Rest
             $response->send(true);
             exit;
         }
+
+        // 独自config（画像の保存先など）を読み込む。このクラスは Controller_Base を継承していないので、ここでも読む
+        Config::load('wishlist', true);
     }
 }

@@ -44,6 +44,7 @@ class Item
                 'items.reason',
                 'items.url',
                 'items.price',
+                'items.image_path',
                 array('categories.name', 'category_name')
             )
             ->from('items')
@@ -59,7 +60,7 @@ class Item
     /**
      * 欲しいものを登録する
      *
-     * @param array $values category_id, name, desire_level, reason, url, price（バリデーション済み。任意項目の未入力は null）
+     * @param array $values category_id, name, desire_level, reason, url, price, image_path（バリデーション済み。任意項目の未入力は null）
      * @return int 追加した欲しいもののID
      */
     public static function create(array $values)
@@ -74,6 +75,7 @@ class Item
                 'reason'       => $values['reason'],
                 'url'          => $values['url'],
                 'price'        => $values['price'],
+                'image_path'   => $values['image_path'],
                 'created_at'   => $now,
                 'updated_at'   => $now,
             ))
@@ -90,7 +92,7 @@ class Item
      *
      * @param int $id 欲しいもののID
      * @param int $user_id ユーザーID
-     * @param array $values category_id, name, desire_level, reason, url, price（バリデーション済み。任意項目の未入力は null）
+     * @param array $values category_id, name, desire_level, reason, url, price, image_path（バリデーション済み。任意項目の未入力は null）
      * @return int 更新した行数
      */
     public static function update($id, $user_id, array $values)
@@ -107,6 +109,7 @@ class Item
                 'reason'       => $values['reason'],
                 'url'          => $values['url'],
                 'price'        => $values['price'],
+                'image_path'   => $values['image_path'],
                 'updated_at'   => date('Y-m-d H:i:s'),
             ))
             ->where('id', '=', $id)
@@ -151,6 +154,24 @@ class Item
             ))
             ->where('category_id', '=', $from_category_id)
             ->execute();
+    }
+
+    /**
+     * カテゴリに入っている欲しいものの画像ファイル名を、すべて取得する（カテゴリ削除の「すべて削除」用）
+     *
+     * DB の行を消すとファイル名が分からなくなるので、消す前に取っておく
+     *
+     * @param int $category_id カテゴリID
+     * @return array ファイル名の配列（画像のないものは含まない）
+     */
+    public static function find_image_paths_by_category_id($category_id)
+    {
+        return \DB::select('image_path')
+            ->from('items')
+            ->where('category_id', '=', $category_id)
+            ->where('image_path', 'IS NOT', null)
+            ->execute()
+            ->as_array(null, 'image_path');
     }
 
     /**
