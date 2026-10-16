@@ -17,4 +17,10 @@ return array(
     'item' => array(
         'price_max' => 99999999, // 金額の上限（円）
     ),
+
+    // 最後に開いたカテゴリを記憶する cookie
+    'last_category_cookie' => array(
+        'name'       => 'last_category_id',
+        'expiration' => 60 * 60 * 24 * 30, // 有効期限（秒）：30日
+    ),
 );
