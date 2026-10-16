@@ -31,6 +31,14 @@ function toCategory(data) {
 const viewModel = {
     categories: ko.observableArray(initialCategories.map(toCategory)),
     baseUrl: baseUrl,
+    // 今開いているカテゴリのID（サーバーが画面ごとに決める。ページ内では変わらないので observable にしない）
+    currentCategoryId: sidebarEl.dataset.currentCategoryId,
+
+    // カテゴリ追加の入力欄を出しているか（false なら「＋カテゴリを追加」ボタンを出す）
+    isAdding: ko.observable(false),
+    // 入力欄にカーソルを入れるための目印。isAdding とは分ける
+    // （hasFocus は入力欄から離れると false に戻すので、isAdding につなぐと「作成」を押した瞬間に入力欄が閉じてしまう）
+    addInputFocused: ko.observable(false),
     newCategoryName: ko.observable(""),
     categoryError: ko.observable(""),
     isSubmitting: ko.observable(false),
@@ -48,6 +56,18 @@ const viewModel = {
     deleteCount: ko.observable(0),
     deleteAction: ko.observable(""),
     isDeleting: ko.observable(false),
+
+    startAdd: function () {
+        viewModel.categoryError("");
+        viewModel.isAdding(true);
+        viewModel.addInputFocused(true);
+    },
+
+    cancelAdd: function () {
+        viewModel.isAdding(false);
+        viewModel.newCategoryName("");
+        viewModel.categoryError("");
+    },
 
     addCategory: async function (form) {
         if (viewModel.isSubmitting()) {
@@ -73,7 +93,8 @@ const viewModel = {
             }
 
             viewModel.categories.push(toCategory(data));
-            viewModel.newCategoryName("");
+            // 作成できたら入力欄を閉じて、「＋カテゴリを追加」ボタンに戻す
+            viewModel.cancelAdd();
         } catch (e) {
             viewModel.categoryError("通信に失敗しました。もう一度お試しください");
         } finally {
