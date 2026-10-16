@@ -27,6 +27,17 @@ class Controller_Main extends Controller_Base
             }
         }
 
+        // 次回ログインしたときに開けるよう、このカテゴリのIDを cookie に記憶する
+        Cookie::set(
+            Config::get('wishlist.last_category_cookie.name'),
+            $category['id'],
+            Config::get('wishlist.last_category_cookie.expiration'),
+            null,  // path（config.php の設定どおり）
+            null,  // domain（同上）
+            false, // secure（開発環境は http のため）
+            true   // http_only（JSから読めないようにする）
+        );
+
         // 一覧の表示は knockout で行うので、データをJSONにして渡す
         $items = \Model\Item::find_by_category_id($category['id']);
         $this->template->title = 'ホーム';

@@ -5,14 +5,6 @@
  */
 class Controller_Item extends Controller_Base
 {
-    public function before()
-    {
-        parent::before();
-
-        // 独自config（星の段階数・金額の上限など）を読み込む
-        Config::load('wishlist', true);
-    }
-
     /**
      * 欲しいもの登録（表示と登録の両方を受ける）
      *

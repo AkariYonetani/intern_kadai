@@ -50,6 +50,11 @@ class Controller_Auth extends Controller_Base
                         Session::rotate();
                         Session::set('user_id', $user['id']);
 
+                        // 最後に開いたカテゴリへ。本人のものかは main/index 側で確かめる
+                        $last_id = (int) Cookie::get(Config::get('wishlist.last_category_cookie.name'));
+                        if ($last_id > 0) {
+                            Response::redirect('main/index/' . $last_id);
+                        }
                         Response::redirect('main/index');
                     }
                 } else {

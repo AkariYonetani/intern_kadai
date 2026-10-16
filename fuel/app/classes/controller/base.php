@@ -14,6 +14,9 @@ abstract class Controller_Base extends Controller_Template
     {
         parent::before();
 
+        // 独自config（星の段階数・金額の上限・cookieの設定など）を読み込む
+        Config::load('wishlist', true);
+
         if ($this->require_login && ! Session::get('user_id')) {
             Response::redirect('auth/login');
         }
