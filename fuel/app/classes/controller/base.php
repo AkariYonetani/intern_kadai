@@ -24,7 +24,11 @@ abstract class Controller_Base extends Controller_Template
             $user_id = Session::get('user_id');
             $categories = \Model\Category::find_by_user_id($user_id);
             $categories_json = json_encode($categories);
-            $this->template->header = View::forge('parts/header');
+            // ユーザー名はログイン時に session へ入れず、DBから取る（同じ情報を2か所に持たない）
+            $user = \Model\User::find_by_id($user_id);
+            $this->template->header = View::forge('parts/header', array(
+                'user_name' => $user === null ? '' : $user['name'],
+            ));
             $this->template->sidebar = View::forge('parts/sidebar', array(
                 'categories_json' => $categories_json,
             ));
