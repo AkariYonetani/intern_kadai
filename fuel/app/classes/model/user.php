@@ -41,6 +41,23 @@ class User
     }
 
     /**
+     * IDでユーザーを探す（ヘッダーにユーザー名を出すため）
+     *
+     * @param int $id ユーザーID
+     * @return array|null 見つかったらidとnameの配列、見つからなければnull
+     */
+    public static function find_by_id($id)
+    {
+        $result = \DB::select('id', 'name')
+            ->from('users')
+            ->where('id', '=', $id)
+            ->execute()
+            ->current();
+
+        return $result;
+    }
+
+    /**
      * ユーザーと「未分類」カテゴリを作成し、新しいユーザーのIDを返す
      *
      * @return int

@@ -6,26 +6,60 @@
     --font-size-s: 20px;
     --font-size-m: 24px;
     /* 色 */
-    --color-bg: #ddd; /* 背景 */
+    --color-bg: #f3f4f6; /* 背景 */
     --color-surface: #ffffff; /* カード・ヘッダー・サイドバー */
     --color-rules: #999999; /* 罫線 */
-    --color-text: #1e1e1e; /* 本文・見出し */
+    --color-text: #1e1e1e; /* 本文・見出し・黒いボタン */
     --color-text-sub: #666666; /* 副題 */
     --color-text-inverse: #ffffff; /* 黒いボタンの上の文字 */
-    --color-error: #a82a2a; /* エラー文・エラーの枠 */
+    --color-error: #a82a2a; /* エラー文・エラーの枠・削除 */
+    --color-error-bg: #f8e8e8; /* エラーのお知らせの背景 */
+    --color-accent: #a8432a; /* 星・リンク（赤茶） */
     --color-selected: #e5e5e5; /* 選択中・メニューを開いている行 */
     /* 角丸 */
     --radius-s: 5px;
     --radius-m: 8px;
+    --radius-l: 12px;
 }
 body {
     font-family: var(--font-family);
+    font-size: var(--font-size-xs);
+    color: var(--color-text);
     background-color: var(--color-bg);
     margin: 0;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
 }
+a {
+    color: var(--color-accent);
+}
+
+/* ===== ヘッダー ===== */
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 20px;
+    background-color: var(--color-surface);
+    border-bottom: 1px solid var(--color-rules);
+}
+.header-title {
+    color: var(--color-text);
+    font-size: var(--font-size-s);
+    text-decoration: none;
+    letter-spacing: 0.1em;
+}
+.header-user {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+.header-user form {
+    margin: 0;
+}
+
+/* ===== レイアウト ===== */
 .layout {
     flex: 1;
     display: grid;
@@ -33,10 +67,153 @@ body {
 }
 .sidebar {
     background-color: var(--color-surface);
+    border-right: 1px solid var(--color-rules);
+}
+.main {
+    padding: 24px 30px;
+}
+
+/* ===== ボタン =====
+   クラスを付けたボタンだけに効かせる（サイドバーの「⋯」などには付けない）
+   .button：枠線だけ（キャンセル・編集・ログアウトなど） / .button-primary：黒（主操作） / .button-danger：赤い文字（削除） */
+.button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    min-height: 44px; /* 押せる要素は高さ44px以上 */
+    padding: 0 20px;
+    border: 1px solid var(--color-rules);
+    border-radius: var(--radius-s);
+    background-color: var(--color-surface);
+    color: var(--color-text);
+    font-family: inherit;
+    font-size: var(--font-size-xs);
+    text-decoration: none;
+    cursor: pointer;
+}
+.button-primary {
+    border-color: var(--color-text);
+    background-color: var(--color-text);
+    color: var(--color-text-inverse);
+    font-weight: 700;
+}
+.button-danger {
+    color: var(--color-error);
+}
+.button-block {
+    width: 100%;
+}
+.button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ===== 入力欄 ===== */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="url"],
+select,
+textarea {
+    box-sizing: border-box;
+    min-height: 44px;
+    padding: 8px 12px;
+    border: 1px solid var(--color-rules);
+    border-radius: var(--radius-s);
+    background-color: var(--color-surface);
+    color: var(--color-text);
+    font-family: inherit;
+    font-size: var(--font-size-xs);
+}
+/* エラーのある入力欄は枠を赤くする */
+input.is-error,
+select.is-error,
+textarea.is-error {
+    border: 2px solid var(--color-error);
+}
+.field {
+    margin-bottom: 16px;
+}
+.field label {
+    display: block;
+    margin-bottom: 6px;
+}
+/* .field の中の入力欄は横幅いっぱい（並び替えのセレクトボックスなどは広げない） */
+.field input,
+.field select,
+.field textarea {
+    width: 100%;
+}
+.field-hint {
+    margin: 6px 0 0;
+    color: var(--color-text-sub);
+    font-size: 14px;
 }
 /* 入力欄の下のエラー文（parts/field_err.php と画像欄） */
 .error {
+    margin: 6px 0 0;
     color: var(--color-error);
+    font-size: 14px;
+    font-weight: 700;
+}
+
+/* ===== お知らせ ===== */
+/* フォーム全体のエラー（「メールアドレスまたはパスワードが違います」など） */
+.form-alert {
+    margin: 0 0 20px;
+    padding: 14px;
+    border: 2px solid var(--color-error);
+    border-radius: var(--radius-m);
+    background-color: var(--color-error-bg);
+    color: var(--color-error);
+    font-weight: 700;
+    text-align: center;
+}
+/* 前の画面からのお知らせ（「保存しました」など） */
+.flash {
+    margin: 0 0 20px;
+    padding: 14px;
+    border-radius: var(--radius-m);
+    font-weight: 700;
+}
+.flash-success {
+    border: 1px solid var(--color-rules);
+    background-color: var(--color-surface);
+}
+.flash-error {
+    border: 2px solid var(--color-error);
+    background-color: var(--color-error-bg);
+    color: var(--color-error);
+}
+
+/* ===== ログイン前の画面（ログイン・ユーザー登録） ===== */
+/* body が flex の縦並びなので、justify-content で上下、align-items で左右の中央に置く */
+body.guest {
+    justify-content: center;
+    align-items: center;
+}
+.guest-card {
+    box-sizing: border-box;
+    width: calc(100% - 32px);
+    max-width: 530px;
+    margin: 16px;
+    padding: 40px;
+    border: 1px solid var(--color-rules);
+    border-radius: var(--radius-l);
+    background-color: var(--color-surface);
+}
+.guest-title {
+    margin: 0 0 24px;
+    font-size: var(--font-size-s);
+}
+.guest-card .button-block {
+    margin-top: 4px;
+    font-size: var(--font-size-s);
+}
+.guest-link {
+    margin: 20px 0 0;
+    font-size: 14px;
 }
 .item-detail-reason {
     white-space: pre-wrap; /* 入力した改行をそのまま表示する */

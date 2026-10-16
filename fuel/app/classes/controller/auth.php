@@ -87,7 +87,7 @@ class Controller_Auth extends Controller_Base
                 $errors['form'] = '画面の有効期限が切れました。もう一度送信してください。';
             } else {
                 $val = Validation::forge();
-                $val->add_field('name', 'ユーザー名', 'required|trim|max_length[50]');
+                $val->add_field('name', '名前', 'required|trim|max_length[50]');
                 $val->add_field('email', 'メールアドレス', 'required|trim|valid_email|max_length[255]');
                 $val->add_field('password', 'パスワード', 'required|min_length[8]|max_length[72]');
 

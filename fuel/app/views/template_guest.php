@@ -11,8 +11,11 @@
     <?php echo Asset::css('style.css'); ?>
 </head>
 
-<body>
-    <?php echo $content; ?>
+<body class="guest">
+    <!-- ログイン前の画面は、中身を画面中央の白いカードに入れる -->
+    <main class="guest-card">
+        <?php echo $content; ?>
+    </main>
 </body>
 
 </html>
