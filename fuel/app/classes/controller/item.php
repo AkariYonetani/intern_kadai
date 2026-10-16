@@ -65,6 +65,8 @@ class Controller_Item extends Controller_Base
             }
         }
 
+        // サイドバーで、登録先の初期値のカテゴリの行を強調する
+        $this->template->sidebar->set('current_category_id', $category['id']);
         $this->template->title = '欲しいもの登録';
         $this->template->page_js = 'item_form.js';
         $this->template->content = View::forge('item/create', array(
@@ -95,6 +97,8 @@ class Controller_Item extends Controller_Base
         // 保存時にも確認しているが、DBに直接入ったデータに備えて、表示時にも http(s):// で始まるか確かめる
         $url_is_link = $item['url'] !== null && preg_match('/\Ahttps?:\/\//i', $item['url']) === 1;
 
+        // サイドバーで、この欲しいものが入っているカテゴリの行を強調する
+        $this->template->sidebar->set('current_category_id', $item['category_id']);
         $this->template->title = $item['name'];
         $this->template->content = View::forge('item/detail', array(
             'item'        => $item,
@@ -170,6 +174,8 @@ class Controller_Item extends Controller_Base
             }
         }
 
+        // サイドバーで、この欲しいものが入っているカテゴリ（編集前）の行を強調する
+        $this->template->sidebar->set('current_category_id', $item['category_id']);
         $this->template->title = '欲しいもの編集';
         $this->template->page_js = 'item_form.js';
         $this->template->content = View::forge('item/edit', array(

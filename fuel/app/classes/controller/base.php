@@ -29,8 +29,10 @@ abstract class Controller_Base extends Controller_Template
             $this->template->header = View::forge('parts/header', array(
                 'user_name' => $user === null ? '' : $user['name'],
             ));
+            // 開いているカテゴリはまだ決まっていないので空にしておく。決まったら各アクションで set する
             $this->template->sidebar = View::forge('parts/sidebar', array(
-                'categories_json' => $categories_json,
+                'categories_json'     => $categories_json,
+                'current_category_id' => '',
             ));
             // 前の画面で Session::set_flash() したメッセージ（1回読むと消える）
             $this->template->flash_success = Session::get_flash('success');

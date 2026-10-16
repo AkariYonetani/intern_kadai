@@ -27,6 +27,9 @@ class Controller_Main extends Controller_Base
             }
         }
 
+        // サイドバーで、このカテゴリの行を強調する（サイドバーは before() で作ってあるので、あとから値を渡す）
+        $this->template->sidebar->set('current_category_id', $category['id']);
+
         // 次回ログインしたときに開けるよう、このカテゴリのIDを cookie に記憶する
         Cookie::set(
             Config::get('wishlist.last_category_cookie.name'),
