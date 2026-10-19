@@ -8,7 +8,20 @@ const itemListModel = {
     // 一覧では ?v=ファイル名 を付ける（差し替えるとURLが変わり、ブラウザのキャッシュの古い画像が出ないようにする）
     imageUrl: itemSection.dataset.imageUrl,
     editUrl: itemSection.dataset.editUrl,
+    // 星の段階数（config の desire_level.max。数字を JS に直接書かない）
+    desireMax: Number(itemSection.dataset.desireMax),
     listError: ko.observable(""),
+
+    // 欲しい度合いを星の文字列にする（例：3 → ★★★☆☆）
+    stars: function (level) {
+        const filled = Number(level);
+        return "★".repeat(filled) + "☆".repeat(itemListModel.desireMax - filled);
+    },
+
+    // 金額を「¥10,000」の形にする（JSON の数値は文字列で届くので、数にしてからカンマを入れる）
+    formatPrice: function (price) {
+        return "¥" + Number(price).toLocaleString("ja-JP");
+    },
     // 削除の通信中は、すべての「削除」ボタンを押せなくする（連打対策）
     isDeleting: ko.observable(false),
 
