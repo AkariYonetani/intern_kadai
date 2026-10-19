@@ -48,6 +48,7 @@ class Controller_Main extends Controller_Base
         $this->template->content = View::forge('main/index', array(
             'category'   => $category,
             'items_json' => json_encode($items),
+            'desire_max' => Config::get('wishlist.desire_level.max'),
         ));
     }
 

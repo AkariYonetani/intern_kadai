@@ -434,16 +434,115 @@ body.guest {
     max-height: 240px;
     object-fit: contain;
 }
-/* 一覧のカードの画像。画像がないときは灰色の枠 */
+/* ===== ホーム（欲しいもの一覧） ===== */
+/* 見出し・並び替え・追加ボタンの1行。狭い画面では折り返す */
+.item-section-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+.category-title {
+    margin: 0;
+    font-size: var(--font-size-m);
+}
+.item-section-tools {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 12px;
+}
+.item-sort-label {
+    color: var(--color-text-sub);
+    font-size: 14px;
+}
+.item-section-tools .button-primary {
+    min-height: 56px;
+    font-size: var(--font-size-s);
+}
+/* カードのグリッド：220px以上の幅で入るだけ並べる（広い画面では4列、狭いと自動で減る） */
+.item-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 16px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+.item-card {
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+    border: 1px solid var(--color-rules);
+    border-radius: var(--radius-l);
+    background-color: var(--color-surface);
+}
+/* 画像はカードの横幅いっぱいの正方形。画像がないときは灰色の枠 */
 .item-image {
     display: block;
-    width: 160px;
-    height: 160px;
+    width: 100%;
+    aspect-ratio: 1 / 1;
     object-fit: cover;
     border-radius: var(--radius-s);
 }
 .item-image-empty {
     background-color: var(--color-selected);
+}
+.item-name {
+    margin: 16px 0 8px;
+    font-size: var(--font-size-s);
+    font-weight: 700;
+    overflow-wrap: anywhere; /* 長い英数字の名前でもカードからはみ出さない */
+}
+.item-name a {
+    color: var(--color-text);
+    text-decoration: none;
+}
+.item-name a:hover {
+    text-decoration: underline;
+}
+/* 星と金額の行。margin-top: auto で、名前の長さが違ってもボタンの位置をカードの下にそろえる */
+.item-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-top: auto;
+}
+.item-desire {
+    margin: 0;
+    color: var(--color-accent);
+    font-size: var(--font-size-s);
+    letter-spacing: 0.05em;
+}
+.item-price {
+    margin: 0;
+    font-size: var(--font-size-s);
+    font-weight: 700;
+}
+.item-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 12px;
+}
+.item-actions .button {
+    padding: 0 8px;
+}
+/* 0件のとき：白い枠の中央に灰色の文字 */
+.empty-message {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+    margin: 0;
+    border-radius: var(--radius-l);
+    background-color: var(--color-surface);
+    color: var(--color-text-sub);
+    font-size: var(--font-size-s);
+    letter-spacing: 0.1em;
 }
 .item-detail-image {
     max-width: 100%;
