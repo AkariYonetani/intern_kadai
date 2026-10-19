@@ -44,7 +44,7 @@
                     <label for="item-name">アイテム名</label>
                     <span class="char-count" data-bind="text: nameCount"></span>
                 </div>
-                <input type="text" id="item-name" name="name" maxlength="100" value="<?php echo $input['name']; ?>" data-bind="textInput: name">
+                <input type="text" id="item-name" name="name" maxlength="<?php echo $limits['name_max']; ?>" value="<?php echo $input['name']; ?>" data-bind="textInput: name">
                 <?php echo View::forge('parts/field_err', array('message' => $errors['name'] ?? '')); ?>
             </div>
 
@@ -80,13 +80,13 @@
 
     <div class="field">
         <label for="item-reason">理由</label>
-        <textarea id="item-reason" name="reason" maxlength="500" rows="6"><?php echo $input['reason']; ?></textarea>
+        <textarea id="item-reason" name="reason" maxlength="<?php echo $limits['reason_max']; ?>" rows="6"><?php echo $input['reason']; ?></textarea>
         <?php echo View::forge('parts/field_err', array('message' => $errors['reason'] ?? '')); ?>
     </div>
 
     <div class="field">
         <label for="item-url">URL</label>
-        <input type="url" id="item-url" name="url" maxlength="2048" value="<?php echo $input['url']; ?>">
+        <input type="url" id="item-url" name="url" maxlength="<?php echo $limits['url_max']; ?>" value="<?php echo $input['url']; ?>">
         <?php echo View::forge('parts/field_err', array('message' => $errors['url'] ?? '')); ?>
     </div>
 

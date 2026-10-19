@@ -33,6 +33,7 @@ abstract class Controller_Base extends Controller_Template
             $this->template->sidebar = View::forge('parts/sidebar', array(
                 'categories_json'     => $categories_json,
                 'current_category_id' => '',
+                'category_name_max'   => Config::get('wishlist.category.name_max'), // 入力欄の maxlength に使う
             ));
             // 前の画面で Session::set_flash() したメッセージ（1回読むと消える）
             $this->template->flash_success = Session::get_flash('success');

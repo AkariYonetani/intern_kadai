@@ -13,9 +13,28 @@ return array(
         'default' => 3, // 登録画面での初期値
     ),
 
+    // 文字数の上限は、DB設計の列の長さ（varchar の文字数）に合わせる
+    // サーバーのバリデーションと、画面の入力欄の maxlength の両方がこの値を使う
+
     // 欲しいもの
     'item' => array(
-        'price_max' => 99999999, // 金額の上限（円）
+        'price_max'  => 99999999, // 金額の上限（円）
+        'name_max'   => 100,      // アイテム名（items.name varchar(100)）
+        'reason_max' => 500,      // 理由（items.reason varchar(500)）
+        'url_max'    => 2048,     // URL（items.url varchar(2048)）
+    ),
+
+    // カテゴリ
+    'category' => array(
+        'name_max' => 50, // カテゴリ名（categories.name varchar(50)）
+    ),
+
+    // ユーザー
+    'user' => array(
+        'name_max'     => 50,  // 名前（users.name varchar(50)）
+        'email_max'    => 255, // メールアドレス（users.email varchar(255)）
+        'password_min' => 8,   // パスワードの最低文字数
+        'password_max' => 72,  // password_hash（bcrypt）が扱えるのは72バイトまでのため
     ),
 
     // 欲しいものの画像

@@ -75,6 +75,7 @@ class Controller_Item extends Controller_Base
             'category'       => $category,
             'desire_max'     => Config::get('wishlist.desire_level.max'),
             'image_max_size' => Config::get('wishlist.image.max_size'),
+            'limits'         => Config::get('wishlist.item'), // 入力欄の maxlength に使う
         ));
     }
 
@@ -184,6 +185,7 @@ class Controller_Item extends Controller_Base
             'item'           => $item,
             'desire_max'     => Config::get('wishlist.desire_level.max'),
             'image_max_size' => Config::get('wishlist.image.max_size'),
+            'limits'         => Config::get('wishlist.item'), // 入力欄の maxlength に使う
         ));
     }
 
@@ -295,17 +297,18 @@ class Controller_Item extends Controller_Base
      */
     protected function validate(array $input)
     {
+        // 上限は独自config（wishlist）から取る。画面の maxlength・星の数と同じ値になる
         $desire_max = Config::get('wishlist.desire_level.max');
-        $price_max = Config::get('wishlist.item.price_max');
+        $limits = Config::get('wishlist.item');
 
         $val = Validation::forge();
-        $val->add_field('name', 'アイテム名', 'required|max_length[100]');
+        $val->add_field('name', 'アイテム名', 'required|max_length[' . $limits['name_max'] . ']');
         $val->add_field('desire_level', '欲しい度合い', 'required|valid_string[numeric]|numeric_between[1,' . $desire_max . ']');
-        $val->add_field('reason', '理由', 'max_length[500]');
+        $val->add_field('reason', '理由', 'max_length[' . $limits['reason_max'] . ']');
         // URLは http:// か https:// で始まるものだけ（javascript: などはエスケープでは防げないため）
-        $val->add_field('url', 'URL', 'max_length[2048]')
+        $val->add_field('url', 'URL', 'max_length[' . $limits['url_max'] . ']')
             ->add_rule('match_pattern', '/\Ahttps?:\/\/\S+\z/i');
-        $val->add_field('price', '金額', 'valid_string[numeric]|numeric_between[0,' . $price_max . ']');
+        $val->add_field('price', '金額', 'valid_string[numeric]|numeric_between[0,' . $limits['price_max'] . ']');
 
         $val->set_message('required', ':labelを入力してください');
         $val->set_message('max_length', ':labelは:param:1文字以内で入力してください');

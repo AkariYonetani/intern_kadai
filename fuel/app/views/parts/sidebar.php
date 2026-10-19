@@ -19,7 +19,7 @@
                 <!-- /ko -->
                 <!-- ko if: $root.editingId() === id -->
                 <form class="category-edit-form" data-bind="submit: $root.saveEdit">
-                    <input type="text" name="name" aria-label="カテゴリ名" maxlength="50" data-bind="textInput: $root.editName, hasFocus: true" />
+                    <input type="text" name="name" aria-label="カテゴリ名" maxlength="<?php echo $category_name_max; ?>" data-bind="textInput: $root.editName, hasFocus: true" />
                     <p class="form-alert" role="alert" data-bind="visible: $root.editError, text: $root.editError"></p>
                     <div class="category-form-actions">
                         <button type="button" class="button" data-bind="click: $root.cancelEdit">キャンセル</button>
@@ -37,7 +37,7 @@
     <form class="category-add-form" data-bind="visible: isAdding, submit: addCategory">
         <?php echo Form::csrf(); ?>
         <label for="new-category-name" class="category-add-label">新しいカテゴリ名</label>
-        <input type="text" id="new-category-name" name="name" maxlength="50" data-bind="textInput: newCategoryName, hasFocus: addInputFocused" />
+        <input type="text" id="new-category-name" name="name" maxlength="<?php echo $category_name_max; ?>" data-bind="textInput: newCategoryName, hasFocus: addInputFocused" />
         <p class="form-alert" role="alert" data-bind="visible: categoryError, text: categoryError"></p>
         <div class="category-form-actions">
             <button type="button" class="button" data-bind="click: cancelAdd">キャンセル</button>

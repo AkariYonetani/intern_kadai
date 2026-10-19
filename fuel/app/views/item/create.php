@@ -9,6 +9,7 @@
             'errors'            => $errors,
             'desire_max'        => $desire_max,
             'image_max_size'    => $image_max_size,
+            'limits'            => $limits,
             'current_image_url' => '',
             'action_url'        => Uri::create('item/create/' . $category['id']),
             'cancel_url'        => Uri::create('main/index/' . $category['id']),

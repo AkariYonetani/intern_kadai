@@ -68,6 +68,7 @@ class Controller_Auth extends Controller_Base
         $this->template->content = View::forge('auth/login', array(
             'input'  => $input,
             'errors' => $errors,
+            'limits' => Config::get('wishlist.user'), // 入力欄の maxlength に使う
         ));
     }
 
@@ -87,9 +88,11 @@ class Controller_Auth extends Controller_Base
                 $errors['form'] = '画面の有効期限が切れました。もう一度送信してください。';
             } else {
                 $val = Validation::forge();
-                $val->add_field('name', '名前', 'required|trim|max_length[50]');
-                $val->add_field('email', 'メールアドレス', 'required|trim|valid_email|max_length[255]');
-                $val->add_field('password', 'パスワード', 'required|min_length[8]|max_length[72]');
+                // 文字数の上限は独自config（wishlist.user）から取る。画面の maxlength と同じ値になる
+                $limits = Config::get('wishlist.user');
+                $val->add_field('name', '名前', 'required|trim|max_length[' . $limits['name_max'] . ']');
+                $val->add_field('email', 'メールアドレス', 'required|trim|valid_email|max_length[' . $limits['email_max'] . ']');
+                $val->add_field('password', 'パスワード', 'required|min_length[' . $limits['password_min'] . ']|max_length[' . $limits['password_max'] . ']');
 
                 $val->set_message('required', ':labelを入力してください');
                 $val->set_message('max_length', ':labelは:param:1文字以内で入力してください');
@@ -123,6 +126,7 @@ class Controller_Auth extends Controller_Base
         $this->template->content = View::forge('auth/register', array(
             'input'  => $input,
             'errors' => $errors,
+            'limits' => Config::get('wishlist.user'), // 入力欄の maxlength と、パスワードの条件の文に使う
         ));
     }
 
