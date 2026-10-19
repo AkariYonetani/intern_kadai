@@ -101,6 +101,12 @@ a {
 .button-danger {
     color: var(--color-error);
 }
+/* 赤茶の枠と文字（詳細画面の「URL」など、外部のページへ移るボタン） */
+.button-outline-accent {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+    font-weight: 700;
+}
 .button-block {
     width: 100%;
 }
@@ -677,7 +683,7 @@ body.guest {
     display: grid;
     grid-template-columns: minmax(0, 360px) minmax(0, 1fr);
     align-items: center;
-    gap: 24px;
+    gap: 32px;
     margin-bottom: 8px;
 }
 .item-detail-image {
@@ -690,8 +696,12 @@ body.guest {
     border-radius: var(--radius-m);
     background-color: var(--color-bg);
 }
+/* 右側の情報。画像との間を広めにとり、カテゴリ → 名前 → 星と金額 → URL の間も広げる */
+.item-detail-info {
+    padding-left: 8px;
+}
 .item-detail-category {
-    margin: 0 0 8px;
+    margin: 0 0 20px;
     color: var(--color-text-sub);
     font-size: var(--font-size-s);
     font-weight: 700;
@@ -728,8 +738,19 @@ body.guest {
     white-space: pre-wrap; /* 入力した改行をそのまま表示する */
     overflow-wrap: anywhere;
 }
+.item-detail-url-button {
+    position: relative; /* 中の visually-hidden（見えない説明文）の基準にする */
+    gap: 8px;
+    margin-top: 20px;
+    padding: 0 16px;
+}
+.icon-external-link {
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+}
 .item-detail-url {
-    margin: 0;
+    margin: 20px 0 0;
     overflow-wrap: anywhere; /* 長いURLでも枠からはみ出さない */
 }
 

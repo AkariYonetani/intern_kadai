@@ -3,6 +3,17 @@
 このアプリで使っている、他者が作ったものとそのライセンスの一覧です。
 （FuelPHP 本体、knockout.js、bootstrap は、それぞれのファイルにライセンス表示が含まれています）
 
+## CoreUI Icons Free
+
+- 使っているもの：アイコン「external-link」（`fuel/app/views/parts/icon_external_link.php`。詳細画面の「URL」ボタン）
+- 作者：creativeLabs Łukasz Holeczek（CoreUI）
+- 出どころ：https://icon-sets.iconify.design/cil/external-link/ （元のリポジトリ：https://github.com/coreui/coreui-icons）
+- ライセンス：CC BY 4.0（https://creativecommons.org/licenses/by/4.0/）
+  - CoreUI Icons Free は、SVG のアイコンに CC BY 4.0、フォントに SIL OFL 1.1、コードに MIT を適用している（https://coreui.io/icons/license/）。このアプリで使っているのは SVG のアイコンなので CC BY 4.0
+- 変更：Iconify が配布する SVG から width / height を外し、class・aria-hidden・focusable を足した。図形のデータは変えていない
+
+CC BY 4.0 の条件は「作品名・作者・出どころ・ライセンスを表示し、変更したならそのことを示す」ことで、ライセンス本文の全文を載せる必要はない（上の表示で条件を満たす）。
+
 ## Famicons
 
 - 使っているもの：アイコン「chevron-back-circle-outline」（`fuel/app/views/parts/icon_back.php`）
