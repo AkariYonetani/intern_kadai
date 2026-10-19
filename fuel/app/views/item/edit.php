@@ -9,6 +9,7 @@
             'errors'            => $errors,
             'desire_max'        => $desire_max,
             'image_max_size'    => $image_max_size,
+            'limits'            => $limits,
             // 今の画像をプレビューの初期値にする（画像がなければ空）
             'current_image_url' => $item['image_path'] === null ? '' : ItemImage::url($item['id'], $item['image_path']),
             'action_url'        => Uri::create('item/edit/' . $item['id']),

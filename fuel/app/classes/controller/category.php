@@ -16,7 +16,8 @@ class Controller_Category extends Controller_Api
         $user_id = Session::get('user_id');
         $name = preg_replace('/\A[\s　]+|[\s　]+\z/u', '', Input::post('name', ''));
         $val = Validation::forge();
-        $val->add_field('name', 'カテゴリ名', 'required|max_length[50]');
+        // 文字数の上限は独自config（wishlist.category）から取る。サイドバーの入力欄の maxlength と同じ値になる
+        $val->add_field('name', 'カテゴリ名', 'required|max_length[' . Config::get('wishlist.category.name_max') . ']');
         $val->set_message('required', ':labelを入力してください');
         $val->set_message('max_length', ':labelは:param:1文字以内で入力してください');
         if (!$val->run(array('name' => $name))) {
@@ -72,7 +73,7 @@ class Controller_Category extends Controller_Api
 
         $name = preg_replace('/\A[\s　]+|[\s　]+\z/u', '', Input::post('name', ''));
         $val = Validation::forge();
-        $val->add_field('name', 'カテゴリ名', 'required|max_length[50]');
+        $val->add_field('name', 'カテゴリ名', 'required|max_length[' . Config::get('wishlist.category.name_max') . ']');
         $val->set_message('required', ':labelを入力してください');
         $val->set_message('max_length', ':labelは:param:1文字以内で入力してください');
         if (!$val->run(array('name' => $name))) {

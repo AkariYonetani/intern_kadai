@@ -10,7 +10,7 @@
     <!-- エラーのある欄は is-error で枠を赤くし、aria-invalid で読み上げソフトにも伝える -->
     <div class="field">
         <label for="email">メールアドレス</label>
-        <input type="email" id="email" name="email" value="<?php echo $input['email']; ?>" maxlength="255"
+        <input type="email" id="email" name="email" value="<?php echo $input['email']; ?>" maxlength="<?php echo $limits['email_max']; ?>"
             <?php if (isset($errors['email'])): ?>class="is-error" aria-invalid="true"<?php endif; ?>>
         <?php echo View::forge('parts/field_err', array('message' => $errors['email'] ?? '')); ?>
     </div>
