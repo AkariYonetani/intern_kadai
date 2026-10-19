@@ -215,9 +215,6 @@ body.guest {
     margin: 20px 0 0;
     font-size: 14px;
 }
-.item-detail-reason {
-    white-space: pre-wrap; /* 入力した改行をそのまま表示する */
-}
 /* ===== サイドバー ===== */
 .sidebar {
     padding: 16px;
@@ -405,19 +402,25 @@ body.guest {
     clip: rect(0 0 0 0);
     white-space: nowrap;
 }
-/* 画像欄：点線の枠全体がファイル選択のボタンになる */
+/* 画像欄：点線の枠全体がファイル選択のボタンになる。右の列の高さに合わせて伸びる（flex: 1） */
 .image-picker {
+    flex: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     gap: 8px;
-    min-height: 160px;
+    min-height: 240px;
     padding: 16px;
     border: 2px dashed var(--color-rules);
     border-radius: var(--radius-m);
-    background-color: var(--color-surface);
+    background-color: var(--color-bg);
     cursor: pointer;
+}
+.image-picker-icon {
+    width: 56px;
+    height: 56px;
+    color: var(--color-text-sub);
 }
 .image-picker.is-error {
     border-color: var(--color-error);
@@ -544,8 +547,199 @@ body.guest {
     font-size: var(--font-size-s);
     letter-spacing: 0.1em;
 }
+
+/* ===== 登録・編集・詳細 共通 ===== */
+/* 「戻る」：アイコン（parts/icon_back.php の SVG）と文字の全体がリンク */
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 44px;
+    margin-bottom: 20px;
+    color: var(--color-text);
+    font-size: var(--font-size-m);
+    font-weight: 700;
+    text-decoration: none;
+}
+/* SVG は図形のデータなので、大きさを変えても形が崩れない。色は SVG の currentColor に入る */
+.back-icon {
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+    color: var(--color-text-sub);
+}
+.back-link:hover .back-icon {
+    color: var(--color-text);
+}
+/* 白い枠 */
+.panel {
+    padding: 32px 48px;
+    border-radius: var(--radius-l);
+    background-color: var(--color-surface);
+}
+.panel-title {
+    margin: 0 0 16px;
+    font-size: var(--font-size-m);
+}
+
+/* ===== 登録・編集フォーム ===== */
+.item-form .field > label,
+.item-form .field-label-row label,
+.item-form .form-label,
+.star-input legend {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 700;
+}
+/* 上の段：左に画像（最大320px）、右に入力欄 */
+.item-form-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 320px) minmax(0, 1fr);
+    gap: 24px;
+    margin-bottom: 4px;
+}
+.item-form-image {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 16px;
+}
+/* ラベルと文字数カウンターを左右の端に置く */
+.field-label-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+}
+.char-count {
+    color: var(--color-text-sub);
+    font-size: 14px;
+}
+/* 欲しい度合いと金額を横に並べる */
+.item-form-row {
+    display: grid;
+    grid-template-columns: minmax(0, 260px) minmax(0, 1fr);
+    gap: 12px;
+}
+.star-input {
+    min-width: 0;
+    margin: 0 0 16px;
+    padding: 0;
+    border: none;
+}
+.star-input legend {
+    padding: 0;
+}
+.star-input-box {
+    display: flex;
+    box-sizing: border-box;
+    min-height: 44px;
+    padding: 0 4px;
+    border: 1px solid var(--color-rules);
+    border-radius: var(--radius-s);
+    background-color: var(--color-surface);
+}
+/* 星1つ分が押せる範囲。position: relative は、中の見えないラジオボタンの基準にするため */
+.star-input-item {
+    position: relative;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    color: var(--color-accent);
+    font-size: var(--font-size-m);
+    cursor: pointer;
+}
+/* キーボードで星を選んでいるときは、その星に枠を出す */
+.star-input-item input:focus-visible + span {
+    outline: 2px solid var(--color-text);
+    outline-offset: 2px;
+    border-radius: var(--radius-s);
+}
+.item-form textarea {
+    resize: vertical; /* 縦方向だけ大きさを変えられる */
+}
+/* ボタンの並びは「キャンセル」左・主操作右。全体は右寄せ */
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 24px;
+}
+.form-actions .button {
+    min-width: 120px;
+    min-height: 52px;
+    font-weight: 700;
+}
+
+/* ===== 詳細 ===== */
+/* 上の段：左に画像（最大360px）、右に情報 */
+.item-detail-top {
+    display: grid;
+    grid-template-columns: minmax(0, 360px) minmax(0, 1fr);
+    align-items: center;
+    gap: 24px;
+    margin-bottom: 8px;
+}
 .item-detail-image {
-    max-width: 100%;
-    max-height: 400px;
-    object-fit: contain;
+    display: block;
+    box-sizing: border-box;
+    width: 100%;
+    aspect-ratio: 6 / 5;
+    object-fit: contain; /* 詳細では画像を切り取らず、全体を見せる */
+    border: 1px solid var(--color-rules);
+    border-radius: var(--radius-m);
+    background-color: var(--color-bg);
+}
+.item-detail-category {
+    margin: 0 0 8px;
+    color: var(--color-text-sub);
+    font-size: var(--font-size-s);
+    font-weight: 700;
+}
+.item-detail-name {
+    margin: 0 0 8px;
+    font-size: var(--font-size-m);
+    overflow-wrap: anywhere;
+}
+.item-detail-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 32px;
+}
+.item-detail-desire {
+    margin: 0;
+    color: var(--color-accent);
+    font-size: 28px;
+    letter-spacing: 0.1em;
+}
+.item-detail-price {
+    margin: 0;
+    font-size: var(--font-size-m);
+    font-weight: 700;
+}
+.item-detail-heading {
+    margin: 24px 0 4px;
+    color: var(--color-text-sub);
+    font-size: var(--font-size-s);
+}
+.item-detail-reason {
+    margin: 0;
+    white-space: pre-wrap; /* 入力した改行をそのまま表示する */
+    overflow-wrap: anywhere;
+}
+.item-detail-url {
+    margin: 0;
+    overflow-wrap: anywhere; /* 長いURLでも枠からはみ出さない */
+}
+
+/* 狭い画面では、登録・編集・詳細の上の段を1列にする */
+@media (max-width: 900px) {
+    .item-form-grid,
+    .item-detail-top {
+        grid-template-columns: minmax(0, 1fr);
+    }
+    .panel {
+        padding: 24px;
+    }
 }
