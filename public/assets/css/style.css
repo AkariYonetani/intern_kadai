@@ -228,6 +228,11 @@ body.guest {
     margin-top: 4px;
     font-size: var(--font-size-s);
 }
+/* 404ページの説明文 */
+.error-page-text {
+    margin: 0 0 24px;
+    color: var(--color-text-sub);
+}
 .guest-link {
     margin: 20px 0 0;
     font-size: 14px;
