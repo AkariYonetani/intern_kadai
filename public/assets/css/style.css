@@ -1,0 +1,906 @@
+:root {
+    /* フォント */
+    --font-family: "Zen Kaku Gothic New", sans-serif; /* フォント */
+    /* フォントサイズ */
+    --font-size-xs: 16px;
+    --font-size-s: 20px;
+    --font-size-m: 24px;
+    /* 色 */
+    --color-bg: #f3f4f6; /* 背景 */
+    --color-surface: #ffffff; /* カード・ヘッダー・サイドバー */
+    --color-rules: #999999; /* 罫線 */
+    --color-text: #1e1e1e; /* 本文・見出し・黒いボタン */
+    --color-text-sub: #666666; /* 副題 */
+    --color-text-inverse: #ffffff; /* 黒いボタンの上の文字 */
+    --color-error: #a82a2a; /* エラー文・エラーの枠・削除 */
+    --color-error-bg: #f8e8e8; /* エラーのお知らせの背景 */
+    --color-accent: #a8432a; /* 星・リンク（赤茶） */
+    --color-selected: #e5e5e5; /* 選択中・メニューを開いている行 */
+    /* ホバー・押している間の色（ファイルの最後の「ホバー・押している間」でまとめて使う） */
+    --color-hover: #f0f1f3; /* 白いボタン：ホバー */
+    --color-active: #e2e4e8; /* 白いボタン：押している間 */
+    --color-row-hover: #efefef; /* カテゴリの行：ホバー（選択中の --color-selected より薄い） */
+    --color-primary-hover: #3d3d3d; /* 黒いボタン：ホバー */
+    --color-primary-active: #575757; /* 黒いボタン：押している間 */
+    --color-error-active: #f0d4d4; /* 削除ボタン：押している間（ホバーは --color-error-bg） */
+    --color-accent-hover: #f8ece8; /* 赤茶のボタン：ホバー */
+    --color-accent-active: #f0d8d0; /* 赤茶のボタン：押している間 */
+    --color-overlay-hover: rgba(0, 0, 0, 0.06); /* 背景のない部品（「⋯」・星）：どの背景の上でも少し暗くする */
+    --color-overlay-active: rgba(0, 0, 0, 0.12);
+    /* 角丸 */
+    --radius-s: 5px;
+    --radius-m: 8px;
+    --radius-l: 12px;
+}
+body {
+    font-family: var(--font-family);
+    font-size: var(--font-size-xs);
+    color: var(--color-text);
+    background-color: var(--color-bg);
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+a {
+    color: var(--color-accent);
+}
+
+/* ===== ヘッダー ===== */
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 20px;
+    background-color: var(--color-surface);
+    border-bottom: 1px solid var(--color-rules);
+}
+.header-title {
+    color: var(--color-text);
+    font-size: var(--font-size-s);
+    text-decoration: none;
+    letter-spacing: 0.1em;
+}
+.header-user {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+.header-user form {
+    margin: 0;
+}
+
+/* ===== レイアウト ===== */
+.layout {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 280px minmax(0, 1fr);
+}
+.sidebar {
+    background-color: var(--color-surface);
+    border-right: 1px solid var(--color-rules);
+}
+.main {
+    padding: 24px 30px;
+}
+
+/* ===== ボタン =====
+   クラスを付けたボタンだけに効かせる（サイドバーの「⋯」などには付けない）
+   .button：枠線だけ（キャンセル・編集・ログアウトなど） / .button-primary：黒（主操作） / .button-danger：赤い文字（削除） */
+.button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    min-height: 44px; /* 押せる要素は高さ44px以上 */
+    padding: 0 20px;
+    border: 1px solid var(--color-rules);
+    border-radius: var(--radius-s);
+    background-color: var(--color-surface);
+    color: var(--color-text);
+    font-family: inherit;
+    font-size: var(--font-size-xs);
+    text-decoration: none;
+    cursor: pointer;
+}
+.button-primary {
+    border-color: var(--color-text);
+    background-color: var(--color-text);
+    color: var(--color-text-inverse);
+    font-weight: 700;
+}
+.button-danger {
+    color: var(--color-error);
+}
+/* 赤茶の枠と文字（詳細画面の「URL」など、外部のページへ移るボタン） */
+.button-outline-accent {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+    font-weight: 700;
+}
+.button-block {
+    width: 100%;
+}
+.button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ===== 入力欄 ===== */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="url"],
+select,
+textarea {
+    box-sizing: border-box;
+    min-height: 44px;
+    padding: 8px 12px;
+    border: 1px solid var(--color-rules);
+    border-radius: var(--radius-s);
+    background-color: var(--color-surface);
+    color: var(--color-text);
+    font-family: inherit;
+    font-size: var(--font-size-xs);
+}
+/* エラーのある入力欄は枠を赤くする */
+input.is-error,
+select.is-error,
+textarea.is-error {
+    border: 2px solid var(--color-error);
+}
+.field {
+    margin-bottom: 16px;
+}
+.field label {
+    display: block;
+    margin-bottom: 6px;
+}
+/* .field の中の入力欄は横幅いっぱい（並び替えのセレクトボックスなどは広げない） */
+.field input,
+.field select,
+.field textarea {
+    width: 100%;
+}
+.field-hint {
+    margin: 6px 0 0;
+    color: var(--color-text-sub);
+    font-size: 14px;
+}
+/* 入力欄の下のエラー文（parts/field_err.php と画像欄） */
+.error {
+    margin: 6px 0 0;
+    color: var(--color-error);
+    font-size: 14px;
+    font-weight: 700;
+}
+
+/* ===== お知らせ ===== */
+/* フォーム全体のエラー（「メールアドレスまたはパスワードが違います」など） */
+.form-alert {
+    margin: 0 0 20px;
+    padding: 14px;
+    border: 2px solid var(--color-error);
+    border-radius: var(--radius-m);
+    background-color: var(--color-error-bg);
+    color: var(--color-error);
+    font-weight: 700;
+    text-align: center;
+}
+/* 前の画面からのお知らせ（「保存しました」など） */
+.flash {
+    margin: 0 0 20px;
+    padding: 14px;
+    border-radius: var(--radius-m);
+    font-weight: 700;
+}
+.flash-success {
+    border: 1px solid var(--color-rules);
+    background-color: var(--color-surface);
+}
+.flash-error {
+    border: 2px solid var(--color-error);
+    background-color: var(--color-error-bg);
+    color: var(--color-error);
+}
+
+/* ===== ログイン前の画面（ログイン・ユーザー登録） ===== */
+/* body が flex の縦並びなので、justify-content で上下、align-items で左右の中央に置く */
+body.guest {
+    justify-content: center;
+    align-items: center;
+}
+.guest-card {
+    box-sizing: border-box;
+    width: calc(100% - 32px);
+    max-width: 530px;
+    margin: 16px;
+    padding: 40px;
+    border: 1px solid var(--color-rules);
+    border-radius: var(--radius-l);
+    background-color: var(--color-surface);
+}
+.guest-title {
+    margin: 0 0 24px;
+    font-size: var(--font-size-s);
+}
+.guest-card .button-block {
+    margin-top: 4px;
+    font-size: var(--font-size-s);
+}
+/* 404ページの説明文 */
+.error-page-text {
+    margin: 0 0 24px;
+    color: var(--color-text-sub);
+}
+.guest-link {
+    margin: 20px 0 0;
+    font-size: 14px;
+}
+/* ===== サイドバー ===== */
+.sidebar {
+    padding: 16px;
+}
+.sidebar-title {
+    margin: 8px 0 12px;
+    color: var(--color-text-sub);
+    font-size: 14px;
+    font-weight: 400;
+    letter-spacing: 0.1em;
+}
+.category-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+/* position: relative：「⋯」メニューをこの行を基準に重ねて出すため */
+.category-item {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-bottom: 4px;
+    border-radius: var(--radius-m);
+}
+/* 開いているカテゴリと、メニューを開いている行は背景をグレーにする */
+.category-item.is-current,
+.category-item.is-menu-open {
+    background-color: var(--color-selected);
+}
+.category-link {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    min-height: 44px;
+    padding: 0 10px;
+    color: var(--color-text);
+    text-decoration: none;
+}
+.category-name {
+    overflow: hidden;
+    text-overflow: ellipsis; /* 長い名前は「…」で省略する */
+    white-space: nowrap;
+}
+.category-count {
+    flex-shrink: 0;
+}
+.category-menu-button {
+    width: 44px;
+    height: 44px;
+    border: none;
+    border-radius: 50%; /* ホバー・押している間の背景を丸く出す */
+    background: none;
+    color: var(--color-text);
+    font-size: var(--font-size-s);
+    cursor: pointer;
+}
+/* 行の右下に重ねて出す吹き出し（knockout の visible で表示・非表示） */
+.category-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    min-width: 120px;
+    margin-top: 4px;
+    padding: 6px;
+    border: 1px solid var(--color-rules);
+    border-radius: var(--radius-m);
+    background-color: var(--color-surface);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+.category-menu-item {
+    min-height: 44px;
+    padding: 0 12px;
+    border: none;
+    border-radius: var(--radius-s);
+    background: none;
+    color: var(--color-text);
+    font-family: inherit;
+    font-size: var(--font-size-xs);
+    text-align: left;
+    cursor: pointer;
+}
+.category-menu-item.is-danger {
+    color: var(--color-error);
+}
+/* カテゴリ名の編集フォーム（行の中に出す） */
+.category-edit-form {
+    width: 100%;
+    padding: 8px;
+}
+.category-edit-form input,
+.category-add-form input {
+    width: 100%;
+}
+.category-form-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+}
+/* 「＋カテゴリを追加」：点線の枠のボタン */
+.category-add-button {
+    width: 100%;
+    min-height: 48px;
+    margin-top: 4px;
+    padding: 0 12px;
+    border: 1px dashed var(--color-rules);
+    border-radius: var(--radius-m);
+    background: none;
+    color: var(--color-text-sub);
+    font-family: inherit;
+    font-size: var(--font-size-xs);
+    text-align: left;
+    cursor: pointer;
+}
+.category-add-form {
+    margin-top: 12px;
+}
+.category-add-label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--color-text-sub);
+    font-size: 14px;
+}
+.sidebar .form-alert {
+    margin: 8px 0 0;
+    padding: 8px;
+    font-size: 14px;
+}
+
+/* ===== カテゴリ削除ポップアップ（<dialog>） ===== */
+.category-delete-dialog {
+    box-sizing: border-box;
+    width: calc(100% - 32px);
+    max-width: 560px;
+    padding: 32px 40px;
+    border: none;
+    border-radius: var(--radius-l);
+}
+/* ::backdrop：ポップアップの後ろの暗い幕（ブラウザが作る） */
+.category-delete-dialog::backdrop {
+    background-color: rgba(0, 0, 0, 0.4);
+}
+.category-delete-dialog h2 {
+    margin: 0 0 12px;
+    font-size: var(--font-size-m);
+}
+.category-delete-dialog p {
+    margin: 0 0 20px;
+}
+.dialog-choices {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.dialog-choices .button {
+    justify-content: flex-start;
+    min-height: 56px;
+}
+/* ボタンの並びは「キャンセル」左・主操作右。全体は右寄せ */
+.dialog-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 16px;
+}
+/* 見えないが、キーボード操作や読み上げでは使える（display: none だとフォーカスできなくなる） */
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+}
+/* 画像欄：点線の枠全体がファイル選択のボタンになる。右の列の高さに合わせて伸びる（flex: 1） */
+.image-picker {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 240px;
+    padding: 16px;
+    border: 2px dashed var(--color-rules);
+    border-radius: var(--radius-m);
+    background-color: var(--color-bg);
+    cursor: pointer;
+}
+.image-picker-icon {
+    width: 56px;
+    height: 56px;
+    color: var(--color-text-sub);
+}
+.image-picker.is-error {
+    border-color: var(--color-error);
+}
+#item-image:focus-visible + .image-picker {
+    outline: 2px solid var(--color-text);
+    outline-offset: 2px;
+}
+.image-picker-hint {
+    color: var(--color-text-sub);
+}
+.image-preview {
+    max-width: 100%;
+    max-height: 240px;
+    object-fit: contain;
+}
+/* ===== ホーム（欲しいもの一覧） ===== */
+/* 見出し・並び替え・追加ボタンの1行。狭い画面では折り返す */
+.item-section-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+.category-title {
+    margin: 0;
+    font-size: var(--font-size-m);
+}
+.item-section-tools {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 12px;
+}
+.item-sort-label {
+    color: var(--color-text-sub);
+    font-size: 14px;
+}
+.item-section-tools .button-primary {
+    min-height: 56px;
+    font-size: var(--font-size-s);
+}
+/* カードのグリッド：220px以上の幅で入るだけ並べる（広い画面では4列、狭いと自動で減る） */
+.item-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 16px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+.item-card {
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+    border: 1px solid var(--color-rules);
+    border-radius: var(--radius-l);
+    background-color: var(--color-surface);
+}
+/* 画像はカードの横幅いっぱいの正方形の枠。画像がないときは灰色の枠
+   contain：画像を切り取らず、全体が枠に収まるように縮小する（縦長・横長でも商品全体が見える）
+   余った部分は白（商品写真は背景が白のものが多く、余白が目立ちにくい）。薄い線で枠の範囲を示す */
+.item-image {
+    display: block;
+    box-sizing: border-box; /* 線の太さを含めて正方形にする */
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: contain;
+    border: 1px solid var(--color-selected);
+    border-radius: var(--radius-s);
+    background-color: var(--color-surface);
+}
+.item-image-empty {
+    background-color: var(--color-selected);
+}
+.item-name {
+    margin: 16px 0 8px;
+    font-size: var(--font-size-s);
+    font-weight: 700;
+    overflow-wrap: anywhere; /* 長い英数字の名前でもカードからはみ出さない */
+}
+.item-name a {
+    color: var(--color-text);
+    text-decoration: none;
+}
+/* 星と金額の行。margin-top: auto で、名前の長さが違ってもボタンの位置をカードの下にそろえる */
+.item-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-top: auto;
+}
+.item-desire {
+    margin: 0;
+    color: var(--color-accent);
+    font-size: var(--font-size-s);
+    letter-spacing: 0.05em;
+}
+.item-price {
+    margin: 0;
+    font-size: var(--font-size-s);
+    font-weight: 700;
+}
+.item-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 12px;
+}
+.item-actions .button {
+    padding: 0 8px;
+}
+/* 0件のとき：白い枠の中央に灰色の文字 */
+.empty-message {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+    margin: 0;
+    border-radius: var(--radius-l);
+    background-color: var(--color-surface);
+    color: var(--color-text-sub);
+    font-size: var(--font-size-s);
+    letter-spacing: 0.1em;
+}
+
+/* ===== 登録・編集・詳細 共通 ===== */
+/* 「戻る」：アイコン（parts/icon_back.php の SVG）と文字の全体がリンク */
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 44px;
+    margin-bottom: 20px;
+    color: var(--color-text-sub); /* アイコンと文字を同じ色にする */
+    font-size: var(--font-size-m);
+    font-weight: 700;
+    text-decoration: none;
+}
+/* SVG は図形のデータなので、大きさを変えても形が崩れない
+   色は SVG の currentColor に入り、リンクの color をそのまま使うので、ホバー時も文字と一緒に変わる */
+.back-icon {
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+}
+/* 白い枠 */
+.panel {
+    padding: 32px 48px;
+    border-radius: var(--radius-l);
+    background-color: var(--color-surface);
+}
+.panel-title {
+    margin: 0 0 16px;
+    font-size: var(--font-size-m);
+}
+
+/* ===== 登録・編集フォーム ===== */
+.item-form .field > label,
+.item-form .field-label-row label,
+.item-form .form-label,
+.star-input legend {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 700;
+}
+/* 上の段：左に画像（最大320px）、右に入力欄 */
+.item-form-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 320px) minmax(0, 1fr);
+    gap: 24px;
+    margin-bottom: 4px;
+}
+.item-form-image {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 16px;
+}
+/* ラベルと文字数カウンターを左右の端に置く */
+.field-label-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+}
+.char-count {
+    color: var(--color-text-sub);
+    font-size: 14px;
+}
+/* 欲しい度合いと金額を横に並べる */
+.item-form-row {
+    display: grid;
+    grid-template-columns: minmax(0, 260px) minmax(0, 1fr);
+    gap: 12px;
+}
+.star-input {
+    min-width: 0;
+    margin: 0 0 16px;
+    padding: 0;
+    border: none;
+}
+.star-input legend {
+    padding: 0;
+}
+.star-input-box {
+    display: flex;
+    box-sizing: border-box;
+    min-height: 44px;
+    padding: 0 4px;
+    border: 1px solid var(--color-rules);
+    border-radius: var(--radius-s);
+    background-color: var(--color-surface);
+}
+/* 星1つ分が押せる範囲。position: relative は、中の見えないラジオボタンの基準にするため */
+.star-input-item {
+    position: relative;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    color: var(--color-accent);
+    font-size: var(--font-size-m);
+    cursor: pointer;
+}
+/* キーボードで星を選んでいるときは、その星に枠を出す */
+.star-input-item input:focus-visible + span {
+    outline: 2px solid var(--color-text);
+    outline-offset: 2px;
+    border-radius: var(--radius-s);
+}
+.item-form textarea {
+    resize: vertical; /* 縦方向だけ大きさを変えられる */
+}
+/* ボタンの並びは「キャンセル」左・主操作右。全体は右寄せ */
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 24px;
+}
+.form-actions .button {
+    min-width: 120px;
+    min-height: 52px;
+    font-weight: 700;
+}
+
+/* ===== 詳細 ===== */
+/* 上の段：左に画像（最大360px）、右に情報 */
+.item-detail-top {
+    display: grid;
+    grid-template-columns: minmax(0, 360px) minmax(0, 1fr);
+    align-items: center;
+    gap: 32px;
+    margin-bottom: 8px;
+}
+.item-detail-image {
+    display: block;
+    box-sizing: border-box;
+    width: 100%;
+    aspect-ratio: 6 / 5;
+    object-fit: contain; /* 詳細では画像を切り取らず、全体を見せる */
+    border: 1px solid var(--color-rules);
+    border-radius: var(--radius-m);
+    background-color: var(--color-bg);
+}
+/* 右側の情報。画像との間を広めにとり、カテゴリ → 名前 → 星と金額 → URL の間も広げる */
+.item-detail-info {
+    padding-left: 8px;
+}
+.item-detail-category {
+    margin: 0 0 20px;
+    color: var(--color-text-sub);
+    font-size: var(--font-size-s);
+    font-weight: 700;
+}
+.item-detail-name {
+    margin: 0 0 8px;
+    font-size: var(--font-size-m);
+    overflow-wrap: anywhere;
+}
+.item-detail-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 32px;
+}
+.item-detail-desire {
+    margin: 0;
+    color: var(--color-accent);
+    font-size: 28px;
+    letter-spacing: 0.1em;
+}
+.item-detail-price {
+    margin: 0;
+    font-size: var(--font-size-m);
+    font-weight: 700;
+}
+.item-detail-heading {
+    margin: 24px 0 4px;
+    color: var(--color-text-sub);
+    font-size: var(--font-size-s);
+}
+.item-detail-reason {
+    margin: 0;
+    white-space: pre-wrap; /* 入力した改行をそのまま表示する */
+    overflow-wrap: anywhere;
+}
+.item-detail-url-button {
+    position: relative; /* 中の visually-hidden（見えない説明文）の基準にする */
+    gap: 8px;
+    margin-top: 20px;
+    padding: 0 16px;
+}
+.icon-external-link {
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+}
+.item-detail-url {
+    margin: 20px 0 0;
+    overflow-wrap: anywhere; /* 長いURLでも枠からはみ出さない */
+}
+
+/* 狭い画面では、登録・編集・詳細の上の段を1列にする */
+@media (max-width: 900px) {
+    .item-form-grid,
+    .item-detail-top {
+        grid-template-columns: minmax(0, 1fr);
+    }
+    .panel {
+        padding: 24px;
+    }
+}
+
+/* ===== ホバー・押している間・キーボードで選んだとき =====
+   押せる要素の状態の色は、ここにまとめる（部品ごとに書くと抜けが出るため）
+   - :hover  … マウスを乗せたとき。@media (hover: hover) の中に書き、マウスなどホバーできる端末だけに付ける
+               （タッチ端末では、指を離したあともホバーの色が残ってしまうため）
+   - :active … 押している間。タッチ端末でも付く
+   - :focus-visible … キーボード（Tab）で選んだとき。マウスで押したときは出ない */
+
+/* 色が少しずつ切り替わるようにする */
+.button,
+.category-item,
+.category-link,
+.category-menu-button,
+.category-menu-item,
+.category-add-button,
+.back-link,
+.image-picker,
+.star-input-item,
+.item-image-link,
+.header-title,
+select {
+    transition: background-color 0.15s, color 0.15s, border-color 0.15s, opacity 0.15s;
+}
+
+/* キーボードで選んだ要素には、どの部品でも同じ枠を出す */
+a:focus-visible,
+button:focus-visible,
+select:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+    outline: 2px solid var(--color-text);
+    outline-offset: 2px;
+}
+
+@media (hover: hover) {
+    /* ボタン（押せないとき＝disabled は色を変えない） */
+    .button:not(:disabled):hover {
+        background-color: var(--color-hover);
+    }
+    .button-primary:not(:disabled):hover {
+        border-color: var(--color-primary-hover);
+        background-color: var(--color-primary-hover);
+    }
+    .button-danger:not(:disabled):hover {
+        border-color: var(--color-error);
+        background-color: var(--color-error-bg);
+    }
+    .button-outline-accent:not(:disabled):hover {
+        background-color: var(--color-accent-hover);
+    }
+    /* カテゴリの行：選択中・メニューを開いている行より薄いグレー */
+    .category-item:not(.is-current):not(.is-menu-open):hover {
+        background-color: var(--color-row-hover);
+    }
+    /* 「⋯」：丸い背景 */
+    .category-menu-button:hover {
+        background-color: var(--color-overlay-hover);
+    }
+    .category-menu-item:hover {
+        background-color: var(--color-hover);
+    }
+    .category-menu-item.is-danger:hover {
+        background-color: var(--color-error-bg);
+    }
+    .category-add-button:hover {
+        border-color: var(--color-text-sub);
+        background-color: var(--color-hover);
+        color: var(--color-text);
+    }
+    /* 「戻る」：アイコンと文字を一緒に濃くする */
+    .back-link:hover {
+        color: var(--color-text);
+    }
+    .header-title:hover {
+        color: var(--color-text-sub);
+    }
+    .item-name a:hover {
+        text-decoration: underline;
+    }
+    .item-image-link:hover {
+        opacity: 0.85;
+    }
+    .image-picker:hover {
+        border-color: var(--color-text-sub);
+        background-color: var(--color-active);
+    }
+    .star-input-item:hover {
+        background-color: var(--color-overlay-hover);
+    }
+    select:hover {
+        border-color: var(--color-text-sub);
+    }
+}
+
+/* 押している間（ホバーより一段濃くして「押した」ことが分かるようにする） */
+.button:not(:disabled):active {
+    background-color: var(--color-active);
+}
+.button-primary:not(:disabled):active {
+    border-color: var(--color-primary-active);
+    background-color: var(--color-primary-active);
+}
+.button-danger:not(:disabled):active {
+    border-color: var(--color-error);
+    background-color: var(--color-error-active);
+}
+.button-outline-accent:not(:disabled):active {
+    background-color: var(--color-accent-active);
+}
+.category-link:active {
+    border-radius: var(--radius-m);
+    background-color: var(--color-selected);
+}
+.category-menu-button:active {
+    background-color: var(--color-overlay-active);
+}
+.category-menu-item:active {
+    background-color: var(--color-active);
+}
+.category-menu-item.is-danger:active {
+    background-color: var(--color-error-active);
+}
+.category-add-button:active {
+    background-color: var(--color-active);
+}
+.back-link:active {
+    color: var(--color-text);
+}
+.item-image-link:active {
+    opacity: 0.7;
+}
+.star-input-item:active {
+    background-color: var(--color-overlay-active);
+}

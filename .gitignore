@@ -2,3 +2,8 @@
 /fuel/app/logs/*/
 /fuel/app/cache/*/
 /fuel/app/tmp/*/
+/fuel/app/config/development/migrations.php
+claude.md
+/design/*
+# アップロードした画像（F-14）
+/fuel/app/uploads/

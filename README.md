@@ -1,12 +1,28 @@
-# インターン課題環境構築手順
+# 欲しいものリスト
 
-## Dockerの基本知識
-Dockerの基本的な概念については、以下のリンクを参考にしてください：
-- [Docker入門（1）](https://qiita.com/Sicut_study/items/4f301d000ecee98e78c9)
-- [Docker入門（2）](https://qiita.com/takusan64/items/4d622ce1858c426719c7)
+欲しいものを、カテゴリに分けて一か所で管理できるWebアプリ。
+アイテム名・欲しい度合い（星）・金額・理由・販売ページのURL・画像をまとめて記録し、欲しい度合いや金額で並べ替えて見比べられる。
 
-## セットアップ手順
+## 主な機能
 
+- ユーザー登録・ログイン・ログアウト
+- カテゴリの作成・名前変更・削除（作成と名前変更は画面を読み込み直さずに反映）
+  - 登録時に「未分類」カテゴリを自動で作成。カテゴリを削除するときは、中の欲しいものを未分類へ移すか、すべて削除するかを選べる
+- 欲しいものの登録・詳細表示・編集・削除（削除は画面を読み込み直さずに反映）
+- 画像の添付・差し替え（jpg / png、2MBまで）
+- 並び替え（新しい順・欲しい度合いが高い順・金額が安い順・金額が高い順）
+- 最後に開いたカテゴリの記憶（次回ログイン時にそのカテゴリを表示）
+
+## 使用技術
+
+| 分類 | 技術 |
+|---|---|
+| サーバー | PHP 7.3 / FuelPHP 1.8 |
+| データベース | MySQL 8.0（InnoDB、utf8mb4） |
+| フロントエンド | knockout.js 3.5.3 |
+| 開発環境 | Docker（Apache + PHP、MySQL） |
+
+## 起動方法
 1. **リポジトリをクローン**
    ```bash
    git clone <リポジトリURL>
@@ -17,49 +33,41 @@ Dockerの基本的な概念については、以下のリンクを参考にし�
    cd docker
    ```
 
-3. **データベース名の設定**
-   `docker-compose.yml` 内の `db` サービスにある `MYSQL_DATABASE` の値を、各自任意のデータベース名に設定してください。
-   
-   例:
-   ```yaml
-   environment:
-     MYSQL_ROOT_PASSWORD: root
-     MYSQL_DATABASE: <your_database_name>  # 任意のデータベース名を指定
-   ```
-
-4. **Dockerイメージのビルド**
+3. **Dockerイメージのビルド**
    ```bash
    docker-compose build
    ```
 
-5. **コンテナの起動**
+4. **コンテナの起動**
    ```bash
    docker-compose up -d
    ```
-6. **ブラウザからlocalhostにアクセス**
 
-## PHP周りのバージョン
-- **PHP**: 7.3
-- **FuelPHP**: 1.8
+5. **テーブルの作成（マイグレーション）**
 
-## ログについて
-- **アクセスログ**: Dockerのコンテナのログ
-- **FuelPHPのエラーログ**: /var/www/html/intern_kadai/fuel/app/logs/
-  - 年月日ごとにログが管理されている
-  - tail -f {見たいログファイル}でログを出力
+   `fuel/app/migrations/` のマイグレーションを実行し、users・categories・items の3つのテーブルを作る。
+   ```bash
+   docker exec -w /var/www/html/my_fuel_project fuelphp-app php oil refine migrate
+   ```
 
-## MySQLコンテナ設定
-このプロジェクトには、MySQLを使用するDBコンテナが含まれています。設定は以下の通りです。
+## ディレクトリ構成（主なもの）
 
-- **MySQLバージョン**: 8.0
-- **ポート**: `3306`
-- **環境変数**:
-  - `MYSQL_ROOT_PASSWORD`: root
-  - `MYSQL_DATABASE`: 各自設定したデータベース名
+```
+fuel/app/
+├── classes/
+│   ├── controller/    コントローラー（Controller_Base が全画面共通のログイン確認など）
+│   ├── model/         モデル（Model\User・Model\Category・Model\Item）
+│   └── itemimage.php  画像の確認・保存・削除
+├── config/
+│   └── wishlist.php   このアプリ独自の設定（星の段階数、文字数の上限、画像の上限など）
+├── migrations/        テーブルを作るマイグレーション
+├── views/             画面のテンプレート
+└── uploads/items/     アップロードされた画像（Git には含めない）
+public/assets/
+├── css/style.css
+└── js/                knockout.js と画面ごとのJS（sidebar.js・item_list.js・item_form.js）
+```
 
-### アクセス情報
-- **ホスト**: `localhost`
-- **ポート**: `3306`
-- **ユーザー名**: `root`
-- **パスワード**: `root`
-- **データベース名**: 各自設定した名前
+## ライセンス
+
+他者が作成したアイコンを使用しています。出どころとライセンスは [THIRD_PARTY_LICENSES.md](THIRD_PARTY_LICENSES.md) を参照してください。

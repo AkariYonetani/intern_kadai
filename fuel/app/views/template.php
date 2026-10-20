@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title><?php echo $title; ?></title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+    <?php echo Asset::css('style.css'); ?>
+</head>
+
+<body>
+    <?php echo $header; ?>
+    <div class="layout">
+        <?php echo $sidebar; ?>
+        <main class="main">
+            <?php if ($flash_success): ?>
+                <p class="flash flash-success" role="status"><?php echo $flash_success; ?></p>
+            <?php endif; ?>
+            <?php if ($flash_error): ?>
+                <p class="flash flash-error" role="alert"><?php echo $flash_error; ?></p>
+            <?php endif; ?>
+            <?php echo $content; ?>
+        </main>
+    </div>
+    <?php echo Asset::js('knockout-3.5.3.js'); ?>
+    <?php echo Asset::js('sidebar.js'); ?>
+    <?php if (isset($page_js)): ?>
+        <?php echo Asset::js($page_js); ?>
+    <?php endif; ?>
+</body>
+
+</html>
