@@ -137,7 +137,9 @@ class Controller_Auth extends Controller_Base
             Response::redirect('main/index');
         }
 
-        Session::delete('user_id');
+        // user_id だけでなく、セッションそのものを破棄する（中身を空にし、セッションの cookie も消す）
+        // 最後に開いたカテゴリの cookie は別の cookie なので残る
+        Session::destroy();
         Response::redirect('auth/login');
     }
 }
