@@ -7,3 +7,5 @@ claude.md
 /design/*
 # アップロードした画像（F-14）
 /fuel/app/uploads/
+# FuelPHP の暗号鍵（各環境で自動生成。鍵を知られると cookie を偽造できるため Git に入れない）
+/fuel/app/config/crypt.php
